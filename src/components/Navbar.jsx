@@ -7,7 +7,7 @@ const Navbar = () => {
 
 
   return (
-    <header className="stickp top-0 z-50 bg-white shadow">
+    <header className="sticky top-0 z-50 bg-white shadow">
       <nav className="mx-auto max-w-7xl flex items-center justify-between px-6 py-4">
         <NavLink
           to={'/'}
