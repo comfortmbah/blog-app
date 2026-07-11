@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 const TextArea = ({
     label,
     name,
+    value,
     onChange,
     placeholder,
     rows = 6,
