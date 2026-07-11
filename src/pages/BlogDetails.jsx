@@ -1,31 +1,40 @@
 import { useParams } from 'react-router-dom'
+import Error from '../components/Error';
+import Loader from '../components/Loader';
+import useFetch from '../hooks/useFetch';
 
 const BlogDetails = () => {
   const { id } = useParams();
+  const { data: blog, loading, error } = useFetch(`https://dummyjson.com/posts/${id}`);
+
+  if (loading) {
+    return <Loader />
+  }
+
+  if (error) {
+    return <Error />
+  }
 
   return (
     <section className='mx-auto max-w-4xl px-6 py-12'>
-      <p className='mb-4 text-sm font-medium text-blue-600'>
-        Blog ID: {id}
-      </p>
-
-      <h1 className='mb-4 text-4xl font-bold text-gray-900'>
-        Blog Title
-      </h1>
-
-      <div className='mb-8 flex flex-wrap gap-4 text-sm text-gray-600'>
-        <span>Author: John Doe</span>
-        <span>Category: Technology</span>
-        <span>Published: November, 2025</span>
+      <div className='mb-4 flex flex-wrap gap-2'>
+        {blog.tags.map((tag) => (
+          <span
+            key={tag}
+            className='rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-600'
+          >
+            #{tag}
+          </span>
+        ))}
       </div>
 
-      <article className='space-y-4 leading-8 text-gray-700'>
-        <p>
-          The complete blog content will be displayed here after we connect this page to our API.
-        </p>
+      <h1 className='mb-6 text-4xl font-bold text-gray-900'>
+        {blog.title}
+      </h1>
 
+      <article className='space-y-6'>
         <p>
-          Later, we'll fetch the selected blog using the ID from the URL and render the full article dynamically.
+          {blog.body}
         </p>
       </article>
     </section>
