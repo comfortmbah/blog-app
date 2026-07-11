@@ -39,7 +39,7 @@ const TextArea = ({
   )
 }
 
-TextArea.PropTypes = {
+TextArea.propTypes = {
     label: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     value: PropTypes.string.isRequired,

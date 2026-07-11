@@ -21,7 +21,7 @@ const Alert = ({ type = "success", message}) => {
   )
 }
 
-Alert.PropTypes = {
+Alert.propTypes = {
     type: PropTypes.oneOf(['success', 'error']),
     message: PropTypes.string,
 };

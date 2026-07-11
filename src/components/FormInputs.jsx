@@ -40,7 +40,7 @@ const FormInputs =
   )
 };
 
-FormInputs.PropTypes = {
+FormInputs.propTypes = {
     label: PropTypes.string.isRequired,
     type: PropTypes.string,
     name: PropTypes.string.isRequired,
