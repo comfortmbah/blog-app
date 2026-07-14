@@ -12,6 +12,11 @@ const Blogs = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const { data, loading, error } = useFetch("https://dummyjson.com/posts");
 
+  const categories = useMemo(() => {
+    const allTags = data.posts.flatMap((blog) => blog.tags);
+    return [...new Set(allTags)].sort();
+  }, [data.posts]);
+
   if (loading) {
     return <Loader />
   }
@@ -19,11 +24,6 @@ const Blogs = () => {
   if (error) {
     return <Error message={error} />
   }
-
-  const categories = useMemo(() => {
-    const allTags = data.posts.flatMap((blog) => blog.tags);
-    return [...new Set(allTags)].sort();
-  }, [data.posts]);
 
   const filteredBlogs = data.posts.filter((blog) => {
     const matchesSearch = blog.title.toLowerCase().includes(searchItem.toLowerCase());
@@ -50,6 +50,12 @@ const Blogs = () => {
           onSearch={setSearchItem}
         />
 
+        <CategoryFilter 
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+        />
+
         <EmptyState 
           title={'No blogs found'}
           message={'Try searching with a different keyword.'}
@@ -74,6 +80,12 @@ const Blogs = () => {
       <SearchBar 
         searchItem={searchItem}
         onSearch={setSearchItem}
+      />
+
+      <CategoryFilter 
+        categories={categories}
+        selectedCategory={selectedCategory}
+        onCategoryChange={setSelectedCategory}
       />
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
