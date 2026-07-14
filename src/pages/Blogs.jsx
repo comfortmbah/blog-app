@@ -13,9 +13,9 @@ const Blogs = () => {
   const { data, loading, error } = useFetch("https://dummyjson.com/posts");
 
   const categories = useMemo(() => {
-    const allTags = data.posts.flatMap((blog) => blog.tags);
+    const allTags = (data?.posts ?? []).flatMap(blog => blog.tags);
     return [...new Set(allTags)].sort();
-  }, [data.posts]);
+  }, [data]);
 
   if (loading) {
     return <Loader />
@@ -25,7 +25,7 @@ const Blogs = () => {
     return <Error message={error} />
   }
 
-  const filteredBlogs = data.posts.filter((blog) => {
+  const filteredBlogs = (data?.posts ?? []).filter((blog) => {
     const matchesSearch = blog.title.toLowerCase().includes(searchItem.toLowerCase());
     const matchesCategory = selectedCategory === "All" || blog.tags.includes(selectedCategory);
 
