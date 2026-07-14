@@ -5,7 +5,7 @@ const BlogCard = ({ blog }) => {
   const { id, title, body, tags } = blog;
   return (
     <article className='flex flex-col rounded-lg border border-gray-200 bg-white
-      p-6 shadow-sm transition hover:shadow-md'>
+      p-6 shadow-sm transition hover:shadow-md mt-6'>
         <div className='mb-4 flex flex-wrap gap-2'>
             {tags.map((tag) => (
                 <span
