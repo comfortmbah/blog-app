@@ -2,8 +2,11 @@ import BlogCard from "../components/BlogCard"
 import Error from "../components/Error"
 import Loader from "../components/Loader"
 import useFetch from "../hooks/useFetch"
+import SearchBar from "../components/SearchBar"
+import { useState } from "react"
 
 const Blogs = () => {
+  const [searchItem, setSearchItem] = useState("")
   const { data, loading, error } = useFetch("https://dummyjson.com/posts");
 
   if (loading) {
@@ -13,6 +16,12 @@ const Blogs = () => {
   if (error) {
     return <Error message={error} />
   }
+
+  const filteredBlogs = data.posts.filter((blog) => {
+    return blog.title.toLowerCase().includes(searchItem.toLowerCase());
+  })
+
+
   return (
     <section className="mx-auto max-w-7xl px-6 py-12">
       <div className="mb-10">
@@ -25,8 +34,13 @@ const Blogs = () => {
         </p>
       </div>
 
+      <SearchBar 
+        searchItem={searchItem}
+        onSearch={setSearchItem}
+      />
+
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {data.posts.map((blog) => (
+        {filteredBlogs.map((blog) => (
           <BlogCard 
             key={blog.id}
             blog={blog}
