@@ -20,9 +20,17 @@ const Blogs = () => {
     return <Error message={error} />
   }
 
+  const categories = useMemo(() => {
+    const allTags = data.posts.flatMap((blog) => blog.tags);
+    return [...new Set(allTags)].sort();
+  }, [data.posts]);
+
   const filteredBlogs = data.posts.filter((blog) => {
-    return blog.title.toLowerCase().includes(searchItem.toLowerCase());
-  })
+    const matchesSearch = blog.title.toLowerCase().includes(searchItem.toLowerCase());
+    const matchesCategory = selectedCategory === "All" || blog.tags.includes(selectedCategory);
+
+    return matchesSearch && matchesCategory;
+  });
 
   if (filteredBlogs.length === 0) {
     return (
