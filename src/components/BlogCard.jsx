@@ -1,11 +1,14 @@
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
+import { useTheme } from '../hooks/useTheme';
 
 const BlogCard = ({ blog }) => {   
+  const { theme } = useTheme();
   const { id, title, body, tags } = blog;
   return (
-    <article className='flex flex-col rounded-lg border border-gray-200 bg-white
-      p-6 shadow-sm transition hover:shadow-md mt-6'>
+    <article className={`flex flex-col rounded-lg border p-6 shadow-sm transition hover:shadow-md mt-6 ${theme === "dark"
+      ? "border-gray-700 bg-gray-800" : "border-gray-200 bg-white"
+    }`}>
         <div className='mb-4 flex flex-wrap gap-2'>
             {tags.map((tag) => (
                 <span
@@ -17,17 +20,19 @@ const BlogCard = ({ blog }) => {
             ))}
         </div>
 
-        <h2 className='mb-3 text-2xl font-semibold text-gray-900'>
+        <h2 className={`mb-3 text-2xl font-semibold ${theme === "dark"
+          ? "text-white" : "text-gray-900"
+        }`}>
             {title}
         </h2>
 
-        <p className='mb-6 line-clamp-3 text-gray-600'>
+        <p className={`mb-6 line-clamp-3 ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}>
             {body}
         </p>
 
         <Link
           to={`/blogs/${id}`}
-          className='mt-auto font-medium text-blue-600 hover:underline'
+          className={`mt-auto font-medium hover:underline ${theme === "dark" ? "text-blue-400" : "text-blue-600"}`}
         >
           Read More
         </Link>
