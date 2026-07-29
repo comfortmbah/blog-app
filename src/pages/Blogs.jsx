@@ -6,8 +6,10 @@ import SearchBar from "../components/SearchBar"
 import { useState, useMemo } from "react"
 import EmptyState from "../components/EmptyState"
 import CategoryFilter from "../components/CategoryFilter"
+import { useTheme } from "../hooks/useTheme"
 
 const Blogs = () => {
+  const { theme } = useTheme();
   const [searchItem, setSearchItem] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const { data, loading, error } = useFetch("https://dummyjson.com/posts");
@@ -36,11 +38,11 @@ const Blogs = () => {
     return (
       <section className="mx-auto max-w-7xl px-6 py-12">
         <div className="mb-10">
-          <h1 className="text-4xl font-bold text-gray-900">
+          <h1 className={`text-4xl font-bold ${theme === "dark" ? "text-gray-300" : "text-gray-900"}`}>
             All Blogs
           </h1>
 
-          <p className="mt-2 text-gray-600">
+          <p className={`mt-2 ${theme === "dark" ? "text-gray-200" : "text-gray-600"}`}>
             Read the latest articles on programming, web development, and technology.
           </p>
         </div>
@@ -68,11 +70,11 @@ const Blogs = () => {
   return (
     <section className="mx-auto max-w-7xl px-6 py-12">
       <div className="mb-10">
-        <h1 className="text-4xl font-bold text-gray-900">
+        <h1 className={`text-4xl font-bold ${theme === "dark" ? "text-gray-300" : "text-gray-900"}`}>
           All Blogs
         </h1>
 
-        <p className="mt-2 text-gray-600">
+        <p className={`mt-2 ${theme === "dark" ? "text-gray-200" : "text-gray-600"}`}>
           Read the latest articles on programming, web development, and technology.
         </p>
       </div>
