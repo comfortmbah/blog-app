@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import useTheme from './hooks/useTheme'
+import { useTheme } from '../hooks/useTheme'
 
 const Navbar = () => {
   const { theme, dispatch } = useTheme();
