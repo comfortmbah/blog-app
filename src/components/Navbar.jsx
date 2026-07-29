@@ -1,9 +1,17 @@
 import { NavLink } from "react-router-dom";
+import useTheme from './hooks/useTheme'
 
 const Navbar = () => {
+  const { theme, dispatch } = useTheme();
   const linkStyles = ({ isActive }) => isActive 
     ? "text-blue-600 font-semibold"
     : "text-gray-700 hover:text-blue-600 transition-colors";
+  
+  function handleToggleTheme() {
+    dispatch({
+      type: "TOGGLE_THEME",
+    })
+  }
 
 
   return (
@@ -51,6 +59,15 @@ const Navbar = () => {
             >
               Contact
             </NavLink>
+          </li>
+          
+          <li>
+            <button
+              onClick={handleToggleTheme}
+              className="rounded-lg border px-4 py-2"
+            >
+              {theme === "light" ? "Dark Mode" : "Light Mode"}
+            </button>
           </li>
         </ul>
       </nav>
