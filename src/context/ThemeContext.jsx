@@ -10,6 +10,9 @@ function ThemeProvider({ children }) {
 
   useEffect(() => {
     localStorage.setItem("theme", state.theme)
+
+    document.documentElement.classList.toggle("dark", state.theme === "dark");
+
   }, [state.theme]);
 
   return (
