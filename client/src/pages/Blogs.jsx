@@ -12,7 +12,7 @@ const Blogs = () => {
   const { theme } = useTheme();
   const [searchItem, setSearchItem] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const { data, loading, error } = useFetch("https://dummyjson.com/posts");
+  const { data, loading, error } = useFetch("http://localhost:9000/api/blogs");
 
   const categories = useMemo(() => {
     const allTags = (data?.posts ?? []).flatMap(blog => blog.tags);
