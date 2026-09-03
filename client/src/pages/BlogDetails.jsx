@@ -5,7 +5,7 @@ import useFetch from '../hooks/useFetch';
 
 const BlogDetails = () => {
   const { id } = useParams();
-  const { data: blog, loading, error } = useFetch(`https://dummyjson.com/posts/${id}`);
+  const { data: blog, loading, error } = useFetch(`http://localhost:9000/api/blogs/${id}`);
 
   if (loading) {
     return <Loader />
