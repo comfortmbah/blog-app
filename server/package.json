@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "migrate": "node-pg-migrate",
+    "migrate": "node --env-file=.env ./node_modules/node-pg-migrate/bin/node-pg-migrate.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
