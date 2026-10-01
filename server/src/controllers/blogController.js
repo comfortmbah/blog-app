@@ -1,17 +1,16 @@
-export const getBlogList = async (req, res, next) => {
+import { getAllPosts } from "../models/postModel.js";
+
+
+export const getBlogs = async (req, res, next) => {
   try {
-    const response = await fetch("https://dummyjson.com/posts");
+    const posts = await getAllPosts();
 
-    if (!response.ok) {
-      throw new Error("Failed to fetch blogs")
-    }
-
-    const data = await response.json();
-    res.json(data);
+    res.json(posts);
   } catch (error) {
     next(error);
   }
 }
+
 
 export const getBlogDetails = async (req, res, next) => {
   try {
