@@ -9,3 +9,21 @@ export const getAllPosts = async () => {
 
   return result.rows;
 }
+
+
+export const createPost = async ({ userId, title, slug, content, published = false, }) => {
+  const result = await pool.query(`
+    INSERT INTO posts (
+      user_id,
+      title,
+      slug,
+      content,
+      published
+    )
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING *`,
+    [userId, title, slug, content, published]
+  );
+
+  return result.rows[0];
+};
