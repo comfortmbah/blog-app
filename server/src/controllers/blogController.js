@@ -1,4 +1,4 @@
-import { getAllPosts } from "../models/postModel.js";
+import { getAllPosts, createPost } from "../models/postModel.js";
 
 
 export const getBlogs = async (req, res, next) => {
@@ -10,6 +10,22 @@ export const getBlogs = async (req, res, next) => {
     next(error);
   }
 }
+
+export const createBlog = async (req, res) => {
+  try {
+    const { userId, title, slug, content, published } = req.body;
+
+    const post = await createPost({ userId, title, slug, content, published });
+
+    res.status(201).json(post);
+  } catch (error) {
+    console.error("Failed to create a post:", error);
+
+    res.status(500).json({
+      message: "Failed to create post",
+    });
+  }
+};
 
 
 export const getBlogDetails = async (req, res, next) => {
