@@ -38,3 +38,20 @@ export const createPost = async ({ userId, title, slug, content, published = fal
 
   return result.rows[0];
 };
+
+
+export const updatePost = async ({ id, title, slug, content, published }) => {
+  const result = await pool.query(`
+    UPDATE posts
+    SET 
+    title = $1,
+    slug = $2,
+    content = $3,
+    published = $4
+    WHERE id = $5
+    AND deleted_at IS NULL
+    RETURNING *
+  `, [title, slug, content, published, id]);
+
+  return result.rows[0];
+}
