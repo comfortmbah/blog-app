@@ -10,6 +10,6 @@ router.post("/", protect, createBlog);
 
 router.get("/:id", getBlogById);
 
-router.patch("/:id", updateBlog);
+router.patch("/:id", protect, updateBlog);
 
 export default router;
