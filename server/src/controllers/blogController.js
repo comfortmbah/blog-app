@@ -1,4 +1,4 @@
-import { getAllPosts, createPost, getPostById } from "../models/postModel.js";
+import { getAllPosts, createPost, getPostById, updatePost } from "../models/postModel.js";
 
 
 
@@ -47,6 +47,30 @@ export const getBlogById = async (req, res) => {
 
     res.status(500).json({
       message: "Failed to fetch post",
+    });
+  }
+};
+
+
+export const updateBlog = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, slug, content, published } = req.body;
+
+    const post = await updatePost({ id, title, slug, content, published });
+
+    if (!post) {
+      return res.status(404).json({
+        message: "Post not found",
+      });
+    }
+
+    res.status(200).json(post);
+  } catch (error) {
+    console.error("Failed to update post:", error);
+
+    res.status(500).json({
+      message: "Failed to update post",
     });
   }
 };
