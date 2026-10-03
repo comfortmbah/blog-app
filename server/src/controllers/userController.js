@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { createUser } from '../models/postModel.js';
+import { createUser } from '../models/userModel.js';
 
 
 export const registerUser = async (req, res) => {
