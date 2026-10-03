@@ -1,4 +1,4 @@
-import { getAllPosts, createPost } from "../models/postModel.js";
+import { getAllPosts, createPost, getPostById } from "../models/postModel.js";
 
 
 
@@ -29,18 +29,24 @@ export const createBlog = async (req, res) => {
 };
 
 
-export const getBlogDetails = async (req, res, next) => {
+export const getBlogById = async (req, res) => {
   try {
     const { id } = req.params;
-    const response = await fetch(`https://dummyjson.com/posts/${id}`);
 
-    if (!response.ok) {
-      throw new Error("Failed to fetch blog");
+    const post = await getPostById(id);
+
+    if (!post) {
+      return res.status(404).json({
+        message: "Post not found",
+      });
     }
 
-    const data = await response.json();
-    res.json(data);
+    res.status(200).json(post);
   } catch (error) {
-    next(error);
+    console.error("Failed to fetch post:", error);
+
+    res.status(500).json({
+      message: "Failed to fetch post",
+    });
   }
-}
+};
