@@ -10,3 +10,14 @@ export const createUser = async ({ name, email, passwordHash }) => {
 
   return result.rows[0];
 }
+
+export const findUserByEmail = async (email) => {
+  const result = await pool.query(`
+    SELECT id, name, email, password_hash, role
+    FROM users
+    WHERE LOWER(email) = LOWER($1)
+    AND deleted_at IS NULL
+  `, [email]);
+
+  return result.rows[0];
+}
