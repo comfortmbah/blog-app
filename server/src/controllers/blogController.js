@@ -14,9 +14,9 @@ export const getBlogs = async (req, res, next) => {
 
 export const createBlog = async (req, res) => {
   try {
-    const { userId, title, slug, content, published } = req.body;
+    const { title, slug, content, published } = req.body;
 
-    const post = await createPost({ userId, title, slug, content, published });
+    const post = await createPost({ userId: req.user.id, title, slug, content, published });
 
     res.status(201).json(post);
   } catch (error) {
