@@ -54,4 +54,4 @@ export const updatePost = async ({ id, title, slug, content, published }) => {
   `, [title, slug, content, published, id]);
 
   return result.rows[0];
-}
+};   
