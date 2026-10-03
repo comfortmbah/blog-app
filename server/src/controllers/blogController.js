@@ -57,6 +57,20 @@ export const updateBlog = async (req, res) => {
     const { id } = req.params;
     const { title, slug, content, published } = req.body;
 
+    const existingPost = await getPostById(id);
+
+    if (!existingPost) {
+      return res.status(404).json({
+        message: "Post not found",
+      });
+    }
+
+    if (existingPost.user_id !== req.user.id) {
+      return res.status(403).json({
+        message: "You are not allowed to update this post",
+      })
+    }
+
     const post = await updatePost({ id, title, slug, content, published });
 
     if (!post) {
