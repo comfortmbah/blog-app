@@ -11,6 +11,17 @@ export const getAllPosts = async () => {
 }
 
 
+export const getPostById = async (id) => {
+  const result = await pool.query(`
+    SELECT * FROM posts
+    WHERE id = $1
+    AND deleted_at IS NULL
+  `, [id]);
+
+  return result.rows[0];
+}
+
+
 export const createPost = async ({ userId, title, slug, content, published = false, }) => {
   const result = await pool.query(`
     INSERT INTO posts (
