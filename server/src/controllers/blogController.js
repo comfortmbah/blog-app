@@ -1,5 +1,5 @@
-import { getAllPosts, createPost, createUser } from "../models/postModel.js";
-import bcrypt from 'bcrypt';
+import { getAllPosts, createPost } from "../models/postModel.js";
+
 
 
 export const getBlogs = async (req, res, next) => {
@@ -24,24 +24,6 @@ export const createBlog = async (req, res) => {
 
     res.status(500).json({
       message: "Failed to create post",
-    });
-  }
-};
-
-export const registerUser = async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-
-    const passwordHash = await bcrypt.hash(password, 10);
-
-    const user = await createUser({ name, email, passwordHash });
-
-    res.status(201).json(user);
-  } catch (error) {
-    console.error("Failed to register user:", error);
-
-    res.status(500).json({
-      message: "Failed to register user",
     });
   }
 };
