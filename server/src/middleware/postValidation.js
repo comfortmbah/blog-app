@@ -13,7 +13,9 @@ export const validateCreatePost = [
     .notEmpty()
     .withMessage("Slug is required")
     .isLength({ max: 280 })
-    .withMessage("Slug must not exceed 280 characters"),
+    .withMessage("Slug must not exceed 280 characters")
+    .matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+    .withMessage("Slug can only contain lowercase letters, numbers, and hyphens"),
  
   body("content")
     .trim()
@@ -36,7 +38,9 @@ export const validateUpdatePost = [
     .notEmpty()
     .withMessage("Slug cannot be empty")
     .isLength({ max: 280 })
-    .withMessage("Slug must not exceed 280 characters"),
+    .withMessage("Slug must not exceed 280 characters")
+    .matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+    .withMessage("Slug can only contain lowercase letters, numbers, and hyphens"),
 
   body("content")
     .optional()
