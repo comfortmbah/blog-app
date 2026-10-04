@@ -47,7 +47,15 @@ export const updatePost = async ({ id, title, slug, content, published }) => {
     title = COALESCE($1, title),
     slug = COALESCE($2, slug),
     content = COALESCE($3, content),
-    published = COALESCE($4, published)
+    published = COALESCE($4, published),
+    published_at = CASE
+    WHEN $4 = true 
+    AND published = false
+    THEN CURRENT_TIMESTAMP
+    WHEN $4 = false 
+    THEN NULL 
+    ELSE published_at
+    END
     WHERE id = $5
     AND deleted_at IS NULL
     RETURNING *
