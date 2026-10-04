@@ -54,4 +54,16 @@ export const updatePost = async ({ id, title, slug, content, published }) => {
   `, [title, slug, content, published, id]);
 
   return result.rows[0];
-};   
+};  
+
+export const softDeletePost = async (id) => {
+  const result = await pool.query(`
+    UPDATE posts
+    SET deleted_at = CURRENT_TIMESTAMP
+    WHERE id = $1
+    AND deleted_at IS NULL
+    RETURNING *
+  `, [id]);
+
+  return result.rows[0];
+};
