@@ -20,3 +20,32 @@ export const validateCreatePost = [
     .notEmpty()
     .withMessage("Content is required")
 ]
+
+export const validateUpdatePost = [
+  body("title")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage("Title cannot be empty")
+    .isLength({ max: 255 })
+    .withMessage("Title must not exceed 255 characters"),
+
+  body("slug")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage("Slug cannot be empty")
+    .isLength({ max: 280 })
+    .withMessage("Slug must not exceed 280 characters"),
+
+  body("content")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage("Content cannot be empty"), 
+
+  body("published")
+    .optional()
+    .isBoolean()
+    .withMessage("Published must be a boolean"),
+];
