@@ -1,4 +1,4 @@
-import { getAllPosts, createPost, getPostById, updatePost } from "../models/postModel.js";
+import { getAllPosts, createPost, getPostById, updatePost, softDeletePost } from "../models/postModel.js";
 
 
 
@@ -85,6 +85,40 @@ export const updateBlog = async (req, res) => {
 
     res.status(500).json({
       message: "Failed to update post",
+    });
+  }
+};
+
+
+export const deleteBlog = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const existingPost = await getPostById(id);
+
+    if (!existingPost) {
+      return res.status(404).json({
+        message: "Post not found",
+      });
+    }
+
+    if (existingPost.user_id !== req.user.id) {
+      return res.status(403).json({
+        message: "You are not allowed to delete this post",
+      });
+    }
+
+    const post = await softDeletePost(id);
+
+    res.status(200).json({
+      message: "Post deleted successfully",
+      post,
+    });
+  } catch (error) {
+    console.error("Failed to delete post:", error);
+
+    res.status(500).json({
+      message: "Failed to delete post",
     });
   }
 };
