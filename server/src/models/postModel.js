@@ -44,10 +44,10 @@ export const updatePost = async ({ id, title, slug, content, published }) => {
   const result = await pool.query(`
     UPDATE posts
     SET 
-    title = $1,
-    slug = $2,
-    content = $3,
-    published = $4
+    title = COALESCE($1, title),
+    slug = COALESCE($2, slug),
+    content = COALESCE($3, content),
+    published = COALESCE($4, published)
     WHERE id = $5
     AND deleted_at IS NULL
     RETURNING *
