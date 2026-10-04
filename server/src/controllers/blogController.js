@@ -22,6 +22,12 @@ export const createBlog = async (req, res) => {
   } catch (error) {
     console.error("Failed to create a post:", error);
 
+    if (error.code === "23505") {
+      return res.status(409).json({
+        message: "Slug is already in use",
+      });
+    }
+
     res.status(500).json({
       message: "Failed to create post",
     });
