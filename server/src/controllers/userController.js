@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
 import { createUser, findUserByEmail } from '../models/userModel.js';
+import AppError from '../utils/AppError.js';
 
 
 export const registerUser = async (req, res, next) => {
@@ -14,12 +15,10 @@ export const registerUser = async (req, res, next) => {
     res.status(201).json(user);
   } catch (error) {
     if (error.code === "23505") {
-      return res.status(409).json({
-        message: "Email is already registered",
-      });
+      throw new AppError("Email is already registered", 409);
     }
 
-    next();
+    next(error);
   }
 };
 
@@ -31,17 +30,13 @@ export const loginUser = async (req, res, next) => {
     const user = await findUserByEmail(email);
 
     if (!user) {
-      return res.status(401).json({
-        message: "Invalid email or password",
-      });
+      throw new AppError("Invalid email or password", 401);
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password_hash);
 
     if (!isPasswordValid) {
-      return res.status(401).json({
-        message: "Invalid email or password",
-      });
+      throw new AppError("Invalid email or password", 401);
     }
 
     const token = jwt.sign(
@@ -68,6 +63,6 @@ export const loginUser = async (req, res, next) => {
       },
     });
   } catch (error) {
-    next();
+    next(error);
   }
 }

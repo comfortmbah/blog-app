@@ -1,4 +1,5 @@
 import { getAllPosts, createPost, getPostById, updatePost, softDeletePost } from "../models/postModel.js";
+import AppError from "../utils/AppError.js";
 
 
 
@@ -21,9 +22,7 @@ export const createBlog = async (req, res, next) => {
     res.status(201).json(post);
   } catch (error) {
     if (error.code === "23505") {
-      return res.status(409).json({
-        message: "Slug is already in use",
-      });
+      throw new AppError("Slug is already in use", 409);
     }
     
     next(error);
@@ -38,9 +37,7 @@ export const getBlogById = async (req, res, next) => {
     const post = await getPostById(id);
 
     if (!post) {
-      return res.status(404).json({
-        message: "Post not found",
-      });
+      throw new AppError("Post not found", 404);
     }
 
     res.status(200).json(post);
@@ -58,31 +55,23 @@ export const updateBlog = async (req, res, next) => {
     const existingPost = await getPostById(id);
 
     if (!existingPost) {
-      return res.status(404).json({
-        message: "Post not found",
-      });
+      throw new AppError("Post not found", 404);
     }
 
     if (existingPost.user_id !== req.user.id) {
-      return res.status(403).json({
-        message: "You are not allowed to update this post",
-      })
+      throw new AppError("You are not allowed to update this post", 403);
     }
 
     const post = await updatePost({ id, title, slug, content, published });
 
     if (!post) {
-      return res.status(404).json({
-        message: "Post not found",
-      });
+      throw new AppError("Post not found", 404);
     }
 
     res.status(200).json(post);
   } catch (error) {
     if (error.code === "23505") {
-      return res.status(409).json({
-        message: "Slug is already in use",
-      });
+      throw new AppError("Slug is already in use", 409);
     }
 
     next(error);
@@ -97,15 +86,11 @@ export const deleteBlog = async (req, res, next) => {
     const existingPost = await getPostById(id);
 
     if (!existingPost) {
-      return res.status(404).json({
-        message: "Post not found",
-      });
+      throw new AppError("Post not found", 404);
     }
 
     if (existingPost.user_id !== req.user.id) {
-      return res.status(403).json({
-        message: "You are not allowed to delete this post",
-      });
+      throw new AppError("You are not allowed to delete this post", 403);
     }
 
     const post = await softDeletePost(id);
