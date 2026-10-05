@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { createUser, findUserByEmail } from '../models/userModel.js';
 
 
-export const registerUser = async (req, res) => {
+export const registerUser = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
 
@@ -13,22 +13,18 @@ export const registerUser = async (req, res) => {
 
     res.status(201).json(user);
   } catch (error) {
-    console.error("Failed to register user:", error);
-
     if (error.code === "23505") {
       return res.status(409).json({
         message: "Email is already registered",
       });
     }
 
-    res.status(500).json({
-      message: "Failed to register user",
-    });
+    next();
   }
 };
 
 
-export const loginUser = async (req, res) => {
+export const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
@@ -72,10 +68,6 @@ export const loginUser = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Failed to login user:", error);
-
-    res.status(500).json({
-      message: "Failed to login user",
-    });
+    next();
   }
 }
