@@ -1,13 +1,12 @@
 import jwt from 'jsonwebtoken';
+import AppError from '../utils/AppError.js';
 
 export const protect = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({
-        message: "Authentication required",
-      });
+      throw new AppError("Authentication required", 401);
     }
 
     const token = authHeader.split(" ")[1];
@@ -18,10 +17,10 @@ export const protect = (req, res, next) => {
 
     next()
   } catch (error) {
-    console.error("Authentication failed:", error);
+    if (error instanceof AppError) {
+      return next(error);
+    }
 
-    return res.status(500).json({
-      message: "Invalid or expired token",
-    });
+    next(new AppError("Invalid or expired token", 401));
   }
 };
