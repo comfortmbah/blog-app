@@ -47,6 +47,7 @@ export const loginUser = async (req, res, next) => {
       process.env.JWT_SECRET,
       {
         expiresIn: "1h",
+        issuer: "blog-api",
       }
     );
 
