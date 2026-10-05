@@ -12,7 +12,7 @@ export const getBlogs = async (req, res, next) => {
   }
 }
 
-export const createBlog = async (req, res) => {
+export const createBlog = async (req, res, next) => {
   try {
     const { title, slug, content, published } = req.body;
 
@@ -20,22 +20,18 @@ export const createBlog = async (req, res) => {
 
     res.status(201).json(post);
   } catch (error) {
-    console.error("Failed to create a post:", error);
-
     if (error.code === "23505") {
       return res.status(409).json({
         message: "Slug is already in use",
       });
     }
-
-    res.status(500).json({
-      message: "Failed to create post",
-    });
+    
+    next(error);
   }
 };
 
 
-export const getBlogById = async (req, res) => {
+export const getBlogById = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -49,16 +45,12 @@ export const getBlogById = async (req, res) => {
 
     res.status(200).json(post);
   } catch (error) {
-    console.error("Failed to fetch post:", error);
-
-    res.status(500).json({
-      message: "Failed to fetch post",
-    });
+    next(error);
   }
 };
 
 
-export const updateBlog = async (req, res) => {
+export const updateBlog = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { title, slug, content, published } = req.body;
@@ -87,22 +79,18 @@ export const updateBlog = async (req, res) => {
 
     res.status(200).json(post);
   } catch (error) {
-    console.error("Failed to update post:", error);
-
     if (error.code === "23505") {
       return res.status(409).json({
         message: "Slug is already in use",
       });
     }
 
-    res.status(500).json({
-      message: "Failed to update post",
-    });
+    next(error);
   }
 };
 
 
-export const deleteBlog = async (req, res) => {
+export const deleteBlog = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -127,10 +115,6 @@ export const deleteBlog = async (req, res) => {
       post,
     });
   } catch (error) {
-    console.error("Failed to delete post:", error);
-
-    res.status(500).json({
-      message: "Failed to delete post",
-    });
+    next(error);
   }
 };

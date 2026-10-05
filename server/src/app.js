@@ -3,6 +3,7 @@ import cors from "cors";
 import blogRouter from "./routes/blogRouter.js"
 import healthRouter from "./routes/healthRouter.js";
 import userRouter from './routes/userRouter.js';
+import { errorHandler } from "./middleware/errorMiddleware.js";
 
 const app = express();
 
@@ -15,5 +16,7 @@ app.use("/api/health", healthRouter);
 app.use("/api/users", userRouter);
 
 app.use("/api/blogs", blogRouter);
+
+app.use(errorHandler);
 
 export default app;
