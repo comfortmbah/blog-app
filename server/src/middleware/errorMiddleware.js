@@ -1,5 +1,5 @@
 export const errorHandler = (err, req, res, next) => {
-  console.log("Unhadled error:", err);
+  console.error("Unhadled error:", err);
 
   const statusCode = err.statusCode || 500;
 
