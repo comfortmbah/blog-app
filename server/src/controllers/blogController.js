@@ -2,6 +2,7 @@ import { getAllPosts, createPost, getPostById, updatePost, softDeletePost, getMy
   getPostsByUserId
 } from "../models/postModel.js";
 import AppError from "../utils/AppError.js";
+import { findUserById } from "../models/userModel.js";
 
 
 
@@ -121,6 +122,12 @@ export const getUserBlogs = async (req, res, next) => {
   try {
     const { userId } = req.params;
 
+    const user = await findUserById(userId);
+
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
     const posts = await getPostsByUserId(userId);
 
     res.status(200).json(posts);
@@ -128,3 +135,5 @@ export const getUserBlogs = async (req, res, next) => {
     next(error);
   }
 }
+
+

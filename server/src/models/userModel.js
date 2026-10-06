@@ -21,3 +21,15 @@ export const findUserByEmail = async (email) => {
 
   return result.rows[0];
 }
+
+
+export const findUserById = async (id) => {
+  const result = await pool.query(`
+    SELECT id, name, email, role
+    FROM users
+    WHERE id = $1
+    AND deleted_at IS NULL
+  `, [id]);
+
+  return result.rows[0];
+};
