@@ -48,6 +48,7 @@ export const loginUser = async (req, res, next) => {
       {
         expiresIn: "1h",
         issuer: "blog-api",
+        audience: "blog-client",
       }
     );
 

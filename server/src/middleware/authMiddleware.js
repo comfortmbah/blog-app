@@ -13,6 +13,7 @@ export const protect = (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET, {
       issuer: "blog-api",
+      audience: "blog-client",
     });
     
     req.user = decoded;
