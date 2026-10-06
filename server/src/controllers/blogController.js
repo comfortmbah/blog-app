@@ -68,7 +68,7 @@ export const updateBlog = async (req, res, next) => {
       throw new AppError("Post not found", 404);
     }
 
-    if (existingPost.user_id !== req.user.id) {
+    if (existingPost.user_id !== req.user.id && req.user.role !== "admin") {
       throw new AppError("You are not allowed to update this post", 403);
     }
 
@@ -99,7 +99,7 @@ export const deleteBlog = async (req, res, next) => {
       throw new AppError("Post not found", 404);
     }
 
-    if (existingPost.user_id !== req.user.id) {
+    if (existingPost.user_id !== req.user.id && req.user.role !== "admin") {
       throw new AppError("You are not allowed to delete this post", 403);
     }
 
