@@ -107,3 +107,15 @@ export const getPublishedPostById = async (id) => {
 
   return result.rows[0];
 };
+
+
+export const getPostsByUserId = async (userId) => {
+  const result = await pool.query(` 
+    SELECT * FROM posts
+    WHERE user_id = $1
+    AND deleted_at IS NULL
+    ORDER BY created_at DESC
+  `, [userId]);
+
+  return result.rows;
+}
