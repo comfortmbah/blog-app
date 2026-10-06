@@ -42,9 +42,16 @@ export const createPost = async ({ userId, title, slug, content, published = fal
       title,
       slug,
       content,
-      published
+      published,
+      published_at
     )
-    VALUES ($1, $2, $3, $4, $5)
+    VALUES ($1, $2, $3, $4, $5,
+    CASE
+    WHEN $5 = true
+    THEN CURRENT_TIMESTAMP
+    ELSE NULL
+    END
+    )
     RETURNING *`,
     [userId, title, slug, content, published]
   );
