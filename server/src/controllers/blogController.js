@@ -128,8 +128,16 @@ export const getUserBlogs = async (req, res, next) => {
       throw new AppError("User not found", 404);
     }
 
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    const page = req.query.page ? Number(req.query.page) : 1;
+    const limit = req.query.limit ? Number(req.query.limit) : 10;
+
+    if (!Number.isInteger(page) || page < 1) {
+      throw new AppError("Page must be a positive integer", 400);
+    }
+
+    if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
+      throw new AppError("Limit must be between 1 and 100", 400);
+    }
 
     const offset = (page - 1) * limit;
 
