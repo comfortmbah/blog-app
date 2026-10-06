@@ -1,4 +1,4 @@
-import { getAllPosts, createPost, getPostById, updatePost, softDeletePost, getMyPosts } from "../models/postModel.js";
+import { getAllPosts, createPost, getPostById, updatePost, softDeletePost, getMyPosts, getPublishedPostById } from "../models/postModel.js";
 import AppError from "../utils/AppError.js";
 
 
@@ -44,7 +44,7 @@ export const getBlogById = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const post = await getPostById(id);
+    const post = await getPublishedPostById(id);
 
     if (!post) {
       throw new AppError("Post not found", 404);

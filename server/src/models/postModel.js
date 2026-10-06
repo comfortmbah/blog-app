@@ -88,3 +88,15 @@ export const softDeletePost = async (id) => {
 
   return result.rows[0];
 };
+
+
+export const getPublishedPostById = async (id) => {
+  const result = await pool.query(`
+    SELECT * FROM posts 
+    WHERE id = $1
+    AND deleted_at IS NULL
+    AND published = true
+  `, [id]);
+
+  return result.rows[0];
+};
