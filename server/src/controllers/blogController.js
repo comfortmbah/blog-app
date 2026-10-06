@@ -1,4 +1,4 @@
-import { getAllPosts, createPost, getPostById, updatePost, softDeletePost } from "../models/postModel.js";
+import { getAllPosts, createPost, getPostById, updatePost, softDeletePost, getMyPosts } from "../models/postModel.js";
 import AppError from "../utils/AppError.js";
 
 
@@ -12,6 +12,16 @@ export const getBlogs = async (req, res, next) => {
     next(error);
   }
 }
+
+export const getMyBlogs = async (req, res, next) => {
+  try {
+    const posts = await getMyPosts(req.user.id);
+
+    res.status(200).json(posts);
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const createBlog = async (req, res, next) => {
   try {

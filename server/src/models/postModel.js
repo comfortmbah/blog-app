@@ -4,8 +4,21 @@ export const getAllPosts = async () => {
   const result = await pool.query(`
     SELECT * FROM posts
     WHERE deleted_at IS NULL
+    AND published = true
     ORDER BY created_at DESC
   `);
+
+  return result.rows;
+}
+
+
+export const getMyPosts = async (userId) => {
+  const result = await pool.query(`
+    SELECT * FROM posts
+    WHERE user_id = $1
+    AND deleted_at IS NULL
+    ORDER BY created_at DESC
+  `, [userId]);
 
   return result.rows;
 }
