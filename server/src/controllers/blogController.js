@@ -128,9 +128,18 @@ export const getUserBlogs = async (req, res, next) => {
       throw new AppError("User not found", 404);
     }
 
-    const posts = await getPostsByUserId(userId);
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
 
-    res.status(200).json(posts);
+    const offset = (page - 1) * limit;
+
+    const posts = await getPostsByUserId(userId, { limit, offset });
+
+    res.status(200).json({
+      page, 
+      limit,
+      posts,
+    });
   } catch (error) {
     next(error);
   }
