@@ -188,6 +188,7 @@ export const getUserBlogs = async (req, res, next) => {
     res.status(200).json({
       page, 
       limit,
+      count: posts.length,
       total,
       totalPages,
       hasNextPage: page < totalPages,
