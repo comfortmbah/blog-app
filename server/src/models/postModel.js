@@ -117,6 +117,7 @@ export const getPostsByUserId = async (userId, { limit, offset, sortOrder, sortB
     AND (
       $2 = ''
       OR title ILIKE '%' || $2 || '%'
+      OR content ILIKE '%' || $2 || '%'
     )
     AND (
       $3 = 'all'
@@ -140,6 +141,7 @@ export const countPostsByUserId = async (userId, search = '', status = 'all') =>
     AND (
       $2 = ''
       OR title ILIKE '%' || $2 || '%'
+      OR content ILIKE '%' || $2 || '%'
     )
     AND (
       $3 = 'all'
