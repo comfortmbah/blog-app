@@ -109,7 +109,7 @@ export const getPublishedPostById = async (id) => {
 };
 
 
-export const getPostsByUserId = async (userId, { limit, offset, sortOrder, sortBy, search }) => {
+export const getPostsByUserId = async (userId, { limit, offset, sortOrder, sortBy, search, status }) => {
   const result = await pool.query(` 
     SELECT * FROM posts
     WHERE user_id = $1
@@ -118,15 +118,20 @@ export const getPostsByUserId = async (userId, { limit, offset, sortOrder, sortB
       $2 = ''
       OR title ILIKE '%' || $2 || '%'
     )
+    AND (
+      $3 = 'all'
+      OR ($3 = 'published' AND published = true)
+      OR ($3 = 'draft' AND published = false)
+    )
     ORDER BY ${sortBy} ${sortOrder}, id DESC
-    LIMIT $3
-    OFFSET $4
-  `, [userId, search, limit, offset]);
+    LIMIT $4
+    OFFSET $5
+  `, [userId, search, status, limit, offset]);
 
   return result.rows;
 }
 
-export const countPostsByUserId = async (userId, search = '') => {
+export const countPostsByUserId = async (userId, search = '', status = 'all') => {
   const result = await pool.query(`
     SELECT COUNT(*)::int AS total
     FROM posts
@@ -136,7 +141,12 @@ export const countPostsByUserId = async (userId, search = '') => {
       $2 = ''
       OR title ILIKE '%' || $2 || '%'
     )
-  `, [userId, search]);
+    AND (
+      $3 = 'all'
+      OR ($3 = 'published' AND published = true)
+      OR ($3 = 'draft' AND published = false)
+    )
+  `, [userId, search, status]);
 
   return result.rows[0].total;
 }

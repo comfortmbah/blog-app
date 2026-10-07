@@ -165,9 +165,19 @@ export const getUserBlogs = async (req, res, next) => {
 
     const search = req.query.search ? req.query.search.trim() : "";
 
-    const posts = await getPostsByUserId(userId, { limit, offset, sortOrder, sortBy: sortColumn, search, });
+    const status = req.query.status || "all";
 
-    const total = await countPostsByUserId(userId, search);
+    if (
+      status !== "all" &&
+      status !== "published" &&
+      status !== "draft"
+    ) {
+      throw new AppError("Status must be all, published, or draft", 400);
+    }
+
+    const posts = await getPostsByUserId(userId, { limit, offset, sortOrder, sortBy: sortColumn, search, status, });
+
+    const total = await countPostsByUserId(userId, search, status);
 
     const totalPages = Math.max(1, Math.ceil(total / limit));
 
@@ -185,6 +195,7 @@ export const getUserBlogs = async (req, res, next) => {
       sortBy,
       sort,
       search,
+      status,
       posts,
     });
   } catch (error) {
