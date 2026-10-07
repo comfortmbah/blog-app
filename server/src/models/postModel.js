@@ -109,12 +109,12 @@ export const getPublishedPostById = async (id) => {
 };
 
 
-export const getPostsByUserId = async (userId, { limit, offset }) => {
+export const getPostsByUserId = async (userId, { limit, offset, sortOrder }) => {
   const result = await pool.query(` 
     SELECT * FROM posts
     WHERE user_id = $1
     AND deleted_at IS NULL
-    ORDER BY created_at DESC
+    ORDER BY created_at ${sortOrder}
     LIMIT $2
     OFFSET $3
   `, [userId, limit, offset]);

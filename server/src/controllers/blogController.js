@@ -142,7 +142,15 @@ export const getUserBlogs = async (req, res, next) => {
 
     const offset = (page - 1) * limit;
 
-    const posts = await getPostsByUserId(userId, { limit, offset });
+    const sort = req.query.sort || "newest";
+
+    if (sort !== "newest" && sort !== "oldest") {
+      throw new AppError("Sort must be either newest or oldest", 400);
+    }
+
+    const sortOrder = sort === "newest" ? "DESC" : "ASC";
+
+    const posts = await getPostsByUserId(userId, { limit, offset, sortOrder });
 
     const total = await countPostsByUserId(userId);
 
