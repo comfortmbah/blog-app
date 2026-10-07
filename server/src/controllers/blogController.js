@@ -163,9 +163,11 @@ export const getUserBlogs = async (req, res, next) => {
 
     const sortColumn = allowedSortFields[sortBy];
 
-    const posts = await getPostsByUserId(userId, { limit, offset, sortOrder, sortBy: sortColumn, });
+    const search = req.query.search ? req.query.search.trim() : "";
 
-    const total = await countPostsByUserId(userId);
+    const posts = await getPostsByUserId(userId, { limit, offset, sortOrder, sortBy: sortColumn, search, });
+
+    const total = await countPostsByUserId(userId, search);
 
     const totalPages = Math.max(1, Math.ceil(total / limit));
 

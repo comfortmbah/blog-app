@@ -109,26 +109,34 @@ export const getPublishedPostById = async (id) => {
 };
 
 
-export const getPostsByUserId = async (userId, { limit, offset, sortOrder, sortBy }) => {
+export const getPostsByUserId = async (userId, { limit, offset, sortOrder, sortBy, search }) => {
   const result = await pool.query(` 
     SELECT * FROM posts
     WHERE user_id = $1
     AND deleted_at IS NULL
+    AND (
+      $2 = ''
+      OR title ILIKE '%' || $2 || '%'
+    )
     ORDER BY ${sortBy} ${sortOrder}, id DESC
-    LIMIT $2
-    OFFSET $3
-  `, [userId, limit, offset]);
+    LIMIT $3
+    OFFSET $4
+  `, [userId, search, limit, offset]);
 
   return result.rows;
 }
 
-export const countPostsByUserId = async (userId) => {
+export const countPostsByUserId = async (userId, search = '') => {
   const result = await pool.query(`
     SELECT COUNT(*)::int AS total
     FROM posts
     WHERE user_id = $1
     AND deleted_at IS NULL
-  `, [userId]);
+    AND (
+      $2 = ''
+      OR title ILIKE '%' || $2 || '%'
+    )
+  `, [userId, search]);
 
   return result.rows[0].total;
 }
