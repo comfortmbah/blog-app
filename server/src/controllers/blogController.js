@@ -146,7 +146,7 @@ export const getUserBlogs = async (req, res, next) => {
 
     const total = await countPostsByUserId(userId);
 
-    const totalPages = Math.ceil(total / limit);
+    const totalPages = Math.max(1, Math.ceil(total / limit));
 
     res.status(200).json({
       page, 
