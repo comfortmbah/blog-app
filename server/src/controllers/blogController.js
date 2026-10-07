@@ -193,6 +193,22 @@ export const getUserBlogs = async (req, res, next) => {
       throw new AppError(`Page ${page} does not exist`, 404);
     }
 
+    const createPageUrl = (targetPage) => {
+      const params = new URLSearchParams({
+        page: targetPage,
+        limit,
+        sort,
+        sortBy,
+        status,
+      });
+
+      if (search) {
+        params.set("search", search);
+      }
+
+      return `/api/blogs/user/${userId}?${params.toString()}`;
+    };
+
     res.status(200).json({
       page, 
       limit,
@@ -201,6 +217,11 @@ export const getUserBlogs = async (req, res, next) => {
       totalPages,
       hasNextPage: page < totalPages,
       hasPreviousPage: page > 1,
+      links: {
+        self: createPageUrl(page),
+        next: page < totalPages ? createPageUrl(page + 1) : null,
+        previous: page > 1 ? createPageUrl(page - 1) : null,
+      },
       sortBy,
       sort,
       search,
