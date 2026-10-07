@@ -165,6 +165,10 @@ export const getUserBlogs = async (req, res, next) => {
 
     const search = req.query.search ? req.query.search.trim() : "";
 
+    if (search.length > 100) {
+      throw new AppError("Search must not exceed 100 characters", 400);
+    }
+
     const status = req.query.status || "all";
 
     if (
