@@ -1,5 +1,6 @@
 import { getAllPosts, createPost, getPostById, updatePost, softDeletePost, getMyPosts, getPublishedPostById,
-  getPostsByUserId
+  getPostsByUserId,
+  countPostsByUserId
 } from "../models/postModel.js";
 import AppError from "../utils/AppError.js";
 import { findUserById } from "../models/userModel.js";
@@ -143,9 +144,17 @@ export const getUserBlogs = async (req, res, next) => {
 
     const posts = await getPostsByUserId(userId, { limit, offset });
 
+    const total = await countPostsByUserId(userId);
+
+    const totalPages = Math.ceil(total / limit);
+
     res.status(200).json({
       page, 
       limit,
+      total,
+      totalPages,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1,
       posts,
     });
   } catch (error) {

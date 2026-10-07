@@ -121,3 +121,14 @@ export const getPostsByUserId = async (userId, { limit, offset }) => {
 
   return result.rows;
 }
+
+export const countPostsByUserId = async (userId) => {
+  const result = await pool.query(`
+    SELECT COUNT(*)::int AS total
+    FROM posts
+    WHERE user_id = $1
+    AND deleted_at IS NULL
+  `, [userId]);
+
+  return result.rows[0].total;
+}
