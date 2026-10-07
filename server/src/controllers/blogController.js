@@ -182,6 +182,9 @@ export const getUserBlogs = async (req, res, next) => {
       totalPages,
       hasNextPage: page < totalPages,
       hasPreviousPage: page > 1,
+      sortBy,
+      sort,
+      search,
       posts,
     });
   } catch (error) {
