@@ -150,7 +150,20 @@ export const getUserBlogs = async (req, res, next) => {
 
     const sortOrder = sort === "newest" ? "DESC" : "ASC";
 
-    const posts = await getPostsByUserId(userId, { limit, offset, sortOrder });
+    const sortBy = req.query.sortBy || "created_at";
+
+    const allowedSortFields = {
+      created_at: "created_at",
+      title: "title",
+    };
+
+    if (!allowedSortFields[sortBy]) {
+      throw new AppError("sortBy must be either created_at or title", 400);
+    }
+
+    const sortColumn = allowedSortFields[sortBy];
+
+    const posts = await getPostsByUserId(userId, { limit, offset, sortOrder, sortBy: sortColumn, });
 
     const total = await countPostsByUserId(userId);
 
