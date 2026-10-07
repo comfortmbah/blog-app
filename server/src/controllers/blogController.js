@@ -136,6 +136,10 @@ export const getUserBlogs = async (req, res, next) => {
       throw new AppError("Page must be a positive integer", 400);
     }
 
+    if (page > 1000) {
+      throw new AppError("Page must not exceed 1000", 400);
+    }
+
     if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
       throw new AppError("Limit must be between 1 and 100", 400);
     }
