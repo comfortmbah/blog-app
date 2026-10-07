@@ -148,6 +148,10 @@ export const getUserBlogs = async (req, res, next) => {
 
     const totalPages = Math.max(1, Math.ceil(total / limit));
 
+    if (page > totalPages) {
+      throw new AppError(`Page ${page} does not exist`, 404);
+    }
+
     res.status(200).json({
       page, 
       limit,
