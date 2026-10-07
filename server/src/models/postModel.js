@@ -114,7 +114,7 @@ export const getPostsByUserId = async (userId, { limit, offset, sortOrder, sortB
     SELECT * FROM posts
     WHERE user_id = $1
     AND deleted_at IS NULL
-    ORDER BY ${sortBy} ${sortOrder}
+    ORDER BY ${sortBy} ${sortOrder}, id DESC
     LIMIT $2
     OFFSET $3
   `, [userId, limit, offset]);
