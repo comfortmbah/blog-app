@@ -212,13 +212,20 @@ export const getUserBlogs = async (req, res, next) => {
     };
 
     res.status(200).json({
-      page, 
-      limit,
-      count: posts.length,
-      total,
-      totalPages,
-      hasNextPage: page < totalPages,
-      hasPreviousPage: page > 1,
+      meta: {
+        page, 
+        limit,
+        count: posts.length,
+        total,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+        sortBy,
+        sort,
+        search,
+        status,
+      },
+
       links: {
         first: createPageUrl(1),
         previous: page > 1 ? createPageUrl(page - 1) : null,
@@ -226,10 +233,7 @@ export const getUserBlogs = async (req, res, next) => {
         next: page < totalPages ? createPageUrl(page + 1) : null,
         last: createPageUrl(totalPages),
       },
-      sortBy,
-      sort,
-      search,
-      status,
+      
       posts,
     });
   } catch (error) {
