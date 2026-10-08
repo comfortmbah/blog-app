@@ -220,10 +220,12 @@ export const getUserBlogs = async (req, res, next) => {
         totalPages,
         hasNextPage: page < totalPages,
         hasPreviousPage: page > 1,
-        sortBy,
-        sort,
-        search,
-        status,
+        filters: {
+          sortBy,
+          sort,
+          search,
+          status,
+        },
       },
 
       links: {
@@ -233,7 +235,7 @@ export const getUserBlogs = async (req, res, next) => {
         next: page < totalPages ? createPageUrl(page + 1) : null,
         last: createPageUrl(totalPages),
       },
-      
+
       posts,
     });
   } catch (error) {
