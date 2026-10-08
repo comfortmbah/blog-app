@@ -146,6 +146,10 @@ export const getUserBlogs = async (req, res, next) => {
 
     const offset = (page - 1) * limit;
 
+    if (!Number.isSafeInteger(offset)) {
+      throw new AppError("Pagination values are too large", 400);
+    }
+
     const sort = req.query.sort || "newest";
 
     if (sort !== "newest" && sort !== "oldest") {
