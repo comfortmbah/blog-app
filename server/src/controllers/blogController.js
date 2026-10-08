@@ -193,6 +193,8 @@ export const getUserBlogs = async (req, res, next) => {
       throw new AppError(`Page ${page} does not exist`, 404);
     }
 
+    const baseUrl = `/api/blogs/user/${userId}`;
+
     const createPageUrl = (targetPage) => {
       const params = new URLSearchParams({
         page: targetPage,
@@ -206,7 +208,7 @@ export const getUserBlogs = async (req, res, next) => {
         params.set("search", search);
       }
 
-      return `/api/blogs/user/${userId}?${params.toString()}`;
+      return `${baseUrl}?${params.toString()}`;
     };
 
     res.status(200).json({
