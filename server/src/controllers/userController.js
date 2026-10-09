@@ -8,9 +8,15 @@ export const registerUser = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
 
+    if (!name || !email || !password) {
+      throw new AppError("Name, email, and password are required", 400);
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
     const passwordHash = await bcrypt.hash(password, 10);
 
-    const user = await createUser({ name, email, passwordHash });
+    const user = await createUser({ name, email: normalizedEmail, passwordHash });
 
     res.status(201).json(user);
   } catch (error) {
@@ -27,7 +33,13 @@ export const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    const user = await findUserByEmail(email);
+    if (!email || !password) {
+      throw new AppError("Email and password are required", 400);
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const user = await findUserByEmail(normalizedEmail);
 
     if (!user) {
       throw new AppError("Invalid email or password", 401);
