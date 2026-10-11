@@ -29,14 +29,14 @@ export const getMyBlogs = async (req, res, next) => {
 
 export const createBlog = async (req, res, next) => {
   try {
-    const { title, slug, content, published } = req.body;
+    const { title, slug, content, published, categoryIds, tagIds } = req.body;
 
-    const post = await createPost({ userId: req.user.id, title, slug, content, published });
+    const post = await createPost({ userId: req.user.id, title, slug, content, published, categoryIds, tagIds });
 
     res.status(201).json(post);
   } catch (error) {
     if (error.code === "23505") {
-      throw new AppError("Slug is already in use", 409);
+      return next(new AppError("Slug is already in use", 409));
     }
     
     next(error);

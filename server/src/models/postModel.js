@@ -35,28 +35,65 @@ export const getPostById = async (id) => {
 }
 
 
-export const createPost = async ({ userId, title, slug, content, published = false, }) => {
-  const result = await pool.query(`
-    INSERT INTO posts (
-      user_id,
-      title,
-      slug,
-      content,
-      published,
-      published_at
-    )
-    VALUES ($1, $2, $3, $4, $5,
-    CASE
-    WHEN $5 = true
-    THEN CURRENT_TIMESTAMP
-    ELSE NULL
-    END
-    )
-    RETURNING *`,
-    [userId, title, slug, content, published]
-  );
+export const createPost = async ({ userId, title, slug, content, published = false, categoryIds = [], tagIds = [], }) => {
+  const client = await pool.connect();
 
-  return result.rows[0];
+  try {
+    await client.query('BEGIN');
+
+    const postResult = await client.query(`
+      INSERT INTO posts (
+        user_id,
+        title,
+        slug,
+        content,
+        published,
+        published_at
+      )
+      VALUES ($1, $2, $3, $4, $5,
+      CASE
+      WHEN $5 = true
+      THEN CURRENT_TIMESTAMP
+      ELSE NULL
+      END
+    )
+      RETURNING *`,
+      [userId, title, slug, content, published]
+    );
+
+    const post = postResult.rows[0];
+    
+    for (const categoryId of categoryIds) {
+      await client.query(`
+        INSERT INTO post_categories (
+          post_id, category_id
+        )
+        VALUES ($1, $2)
+      `, [post.id, categoryId]);
+    }
+
+    for (const tagId of tagIds) {
+      await client.query(`
+        INSERT INTO post_tags (
+          post_id, tag_id
+        )
+        VALUES ($1, $2)
+      `, [post.id, tagId]);
+    }
+
+    await client.query('COMMIT');
+    return post;
+  } catch (error) {
+    try {
+      await client.query('ROLLBACK');
+    } catch (rollbackError) {
+      console.error('Transaction rollback failed:', rollbackError);
+    }
+
+    throw error;
+  } finally {
+    client.release();
+  }
 };
 
 
