@@ -64,7 +64,7 @@ export const getBlogById = async (req, res, next) => {
 export const updateBlog = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { title, slug, content, published } = req.body;
+    const { title, slug, content, published, categoryIds, tagIds } = req.body;
 
     const existingPost = await getPostById(id);
 
@@ -76,7 +76,7 @@ export const updateBlog = async (req, res, next) => {
       throw new AppError("You are not allowed to update this post", 403);
     }
 
-    const post = await updatePost({ id, title, slug, content, published });
+    const post = await updatePost({ id, title, slug, content, published, categoryIds, tagIds });
 
     if (!post) {
       throw new AppError("Post not found", 404);
@@ -84,7 +84,7 @@ export const updateBlog = async (req, res, next) => {
 
     res.status(200).json(post);
   } catch (error) {
-    if (error.code === "23505") {
+    if (error.code === "23505" && error.constraint === 'posts_slug_key') {
       throw new AppError("Slug is already in use", 409);
     }
 
