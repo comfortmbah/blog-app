@@ -7,6 +7,7 @@ import { errorHandler } from "./middleware/errorMiddleware.js";
 import AppError from "./utils/AppError.js";
 import categoryRouter from './routes/categoryRouter.js';
 import tagRouter from './routes/tagRouter.js';
+import commentRouter from './routes/commentRouter.js'
 
 
 const app = express();
@@ -24,6 +25,8 @@ app.use("/api/blogs", blogRouter);
 app.use("/api/categories", categoryRouter);
 
 app.use("/api/tags", tagRouter);
+
+app.use("/api", commentRouter);
 
 app.use((req, res, next) => {
   next(new AppError(`Route not found: ${req.method} ${req.originalUrl}`, 404));
