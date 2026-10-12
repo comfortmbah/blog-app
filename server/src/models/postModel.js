@@ -151,29 +151,127 @@ export const createPost = async ({
 };
 
 
-export const updatePost = async ({ id, title, slug, content, published }) => {
-  const result = await pool.query(`
-    UPDATE posts
-    SET 
-    title = COALESCE($1, title),
-    slug = COALESCE($2, slug),
-    content = COALESCE($3, content),
-    published = COALESCE($4, published),
-    published_at = CASE
-    WHEN $4 = true 
-    AND published = false
-    THEN CURRENT_TIMESTAMP
-    WHEN $4 = false 
-    THEN NULL 
-    ELSE published_at
-    END
-    WHERE id = $5
-    AND deleted_at IS NULL
-    RETURNING *
-  `, [title, slug, content, published, id]);
+export const updatePost = async ({
+  id,
+  title,
+  slug,
+  content,
+  published,
+  categoryIds,
+  tagIds,
+}) => {
+  const client = await pool.connect();
 
-  return result.rows[0];
-};  
+  try {
+    await client.query('BEGIN');
+
+    const result = await client.query(
+      `
+        UPDATE posts
+        SET
+          title = COALESCE($1, title),
+          slug = COALESCE($2, slug),
+          content = COALESCE($3, content),
+          published = COALESCE($4, published),
+          published_at = CASE
+            WHEN $4 = true AND published = false
+              THEN CURRENT_TIMESTAMP
+            WHEN $4 = false
+              THEN NULL
+            ELSE published_at
+          END
+        WHERE id = $5
+          AND deleted_at IS NULL
+        RETURNING *
+      `,
+      [title, slug, content, published, id]
+    );
+
+    const post = result.rows[0];
+
+    if (!post) {
+      await client.query('ROLLBACK');
+      return null;
+    }
+
+    if (categoryIds !== undefined) {
+      await client.query(
+        'DELETE FROM post_categories WHERE post_id = $1',
+        [id]
+      );
+
+      for (const categoryId of categoryIds) {
+        await client.query(
+          `
+            INSERT INTO post_categories (post_id, category_id)
+            VALUES ($1, $2)
+          `,
+          [id, categoryId]
+        );
+      }
+    }
+
+    if (tagIds !== undefined) {
+      await client.query(
+        'DELETE FROM post_tags WHERE post_id = $1',
+        [id]
+      );
+
+      for (const tagId of tagIds) {
+        await client.query(
+          `
+            INSERT INTO post_tags (post_id, tag_id)
+            VALUES ($1, $2)
+          `,
+          [id, tagId]
+        );
+      }
+    }
+
+    const categoriesResult = await client.query(
+      `
+        SELECT c.id, c.name, c.slug
+        FROM categories c
+        JOIN post_categories pc ON pc.category_id = c.id
+        WHERE pc.post_id = $1
+        ORDER BY c.name ASC
+      `,
+      [id]
+    );
+
+    const tagsResult = await client.query(
+      `
+        SELECT t.id, t.name, t.slug
+        FROM tags t
+        JOIN post_tags pt ON pt.tag_id = t.id
+        WHERE pt.post_id = $1
+        ORDER BY t.name ASC
+      `,
+      [id]
+    );
+
+    await client.query('COMMIT');
+
+    return {
+      ...post,
+      categories: categoriesResult.rows,
+      tags: tagsResult.rows,
+    };
+  } catch (error) {
+    try {
+      await client.query('ROLLBACK');
+    } catch (rollbackError) {
+      console.error(
+        'Transaction rollback failed:',
+        rollbackError
+      );
+    }
+
+    throw error;
+  } finally {
+    client.release();
+  }
+};
 
 export const softDeletePost = async (id) => {
   const result = await pool.query(`
