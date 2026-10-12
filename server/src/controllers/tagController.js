@@ -59,7 +59,7 @@ export const updateTagController = async (req, res, next) => {
   }
 };
 
-export const deleteTagController = async (id) => {
+export const deleteTagController = async (req, res, next) => {
   try {
     const { id } = req.params;
 
