@@ -35,59 +35,113 @@ export const getPostById = async (id) => {
 }
 
 
-export const createPost = async ({ userId, title, slug, content, published = false, categoryIds = [], tagIds = [], }) => {
+export const createPost = async ({
+  userId,
+  title,
+  slug,
+  content,
+  published = false,
+  categoryIds = [],
+  tagIds = [],
+}) => {
   const client = await pool.connect();
 
   try {
     await client.query('BEGIN');
 
-    const postResult = await client.query(`
-      INSERT INTO posts (
-        user_id,
-        title,
-        slug,
-        content,
-        published,
-        published_at
-      )
-      VALUES ($1, $2, $3, $4, $5,
-      CASE
-      WHEN $5 = true
-      THEN CURRENT_TIMESTAMP
-      ELSE NULL
-      END
-    )
-      RETURNING *`,
+    const postResult = await client.query(
+      `
+        INSERT INTO posts (
+          user_id,
+          title,
+          slug,
+          content,
+          published,
+          published_at
+        )
+        VALUES (
+          $1,
+          $2,
+          $3,
+          $4,
+          $5,
+          CASE
+            WHEN $5 = true THEN CURRENT_TIMESTAMP
+            ELSE NULL
+          END
+        )
+        RETURNING *
+      `,
       [userId, title, slug, content, published]
     );
 
     const post = postResult.rows[0];
-    
+
     for (const categoryId of categoryIds) {
-      await client.query(`
-        INSERT INTO post_categories (
-          post_id, category_id
-        )
-        VALUES ($1, $2)
-      `, [post.id, categoryId]);
+      await client.query(
+        `
+          INSERT INTO post_categories (
+            post_id,
+            category_id
+          )
+          VALUES ($1, $2)
+        `,
+        [post.id, categoryId]
+      );
     }
 
     for (const tagId of tagIds) {
-      await client.query(`
-        INSERT INTO post_tags (
-          post_id, tag_id
-        )
-        VALUES ($1, $2)
-      `, [post.id, tagId]);
+      await client.query(
+        `
+          INSERT INTO post_tags (
+            post_id,
+            tag_id
+          )
+          VALUES ($1, $2)
+        `,
+        [post.id, tagId]
+      );
     }
 
+    const categoriesResult = await client.query(
+      `
+        SELECT c.id, c.name, c.slug
+        FROM categories c
+        JOIN post_categories pc
+          ON pc.category_id = c.id
+        WHERE pc.post_id = $1
+        ORDER BY c.name ASC
+      `,
+      [post.id]
+    );
+
+    const tagsResult = await client.query(
+      `
+        SELECT t.id, t.name, t.slug
+        FROM tags t
+        JOIN post_tags pt
+          ON pt.tag_id = t.id
+        WHERE pt.post_id = $1
+        ORDER BY t.name ASC
+      `,
+      [post.id]
+    );
+
     await client.query('COMMIT');
-    return post;
+
+    return {
+      ...post,
+      categories: categoriesResult.rows,
+      tags: tagsResult.rows,
+    };
   } catch (error) {
     try {
       await client.query('ROLLBACK');
     } catch (rollbackError) {
-      console.error('Transaction rollback failed:', rollbackError);
+      console.error(
+        'Transaction rollback failed:',
+        rollbackError
+      );
     }
 
     throw error;
