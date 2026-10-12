@@ -35,8 +35,16 @@ export const createBlog = async (req, res, next) => {
 
     res.status(201).json(post);
   } catch (error) {
-    if (error.code === "23505") {
+    if (error.code === "23505" && error.constraint === 'posts_slug_key') {
       return next(new AppError("Slug is already in use", 409));
+    }
+
+    if (error.code === "23505" && error.constraint === 'post_categories_pkey') {
+      return next(new AppError("This category is already assigned to the post", 409));
+    }
+
+    if (error.code === "23505" && error.constraint === 'post_tags_pkey') {
+      return next(new AppError("This tag is already assigned to the post", 409));
     }
     
     next(error);
