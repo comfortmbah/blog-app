@@ -85,7 +85,15 @@ export const updateBlog = async (req, res, next) => {
     res.status(200).json(post);
   } catch (error) {
     if (error.code === "23505" && error.constraint === 'posts_slug_key') {
-      throw new AppError("Slug is already in use", 409);
+      return next(new AppError("Slug is already in use", 409));
+    }
+
+    if (error.code === "23503" && error.constraint === "post_categories_category_id_fkey") {
+      return next(new AppError("One or more category IDs do not exist",400));
+    }
+
+    if (error.code === "23503" && error.constraint === "post_tags_tag_id_fkey") {
+      return next(new AppError("One or more tags IDs do not exist",400));
     }
 
     next(error);
