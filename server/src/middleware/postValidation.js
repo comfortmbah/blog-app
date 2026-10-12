@@ -20,7 +20,52 @@ export const validateCreatePost = [
   body("content")
     .trim()
     .notEmpty()
-    .withMessage("Content is required")
+    .withMessage("Content is required"),
+  
+  body("published")
+    .optional()
+    .isBoolean()
+    .withMessage("Published must be a boolean"),
+
+  body("categoryIds")
+    .optional()
+    .isArray()
+    .withMessage("Category IDs must be an array"),
+
+  body("categoryIds.*")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("Each category ID must be a positive integer"),
+
+  body("categoryIds")
+    .optional()
+    .custom((categoryIds) => {
+      if (new Set(categoryIds).size !== categoryIds.length) {
+        throw new Error("Duplicate category IDs are not allowed")
+      }
+
+      return true;
+    }),
+
+  body("tagIds")
+    .optional()
+    .isArray()
+    .withMessage("Tag IDs must be an array"),
+
+  body("tagIds.*")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("Each tag ID must be a positive integer"),
+
+  body("tagIds")
+    .optional()
+    .custom((tagIds) => {
+      if (new Set(tagIds).size !== tagIds.length) {
+        throw new Error("Duplicate tag IDs are not allowed")
+      }
+
+      return true;
+    }),
 ]
 
 export const validateUpdatePost = [
@@ -52,4 +97,44 @@ export const validateUpdatePost = [
     .optional()
     .isBoolean()
     .withMessage("Published must be a boolean"),
+  
+  body("categoryIds")
+    .optional()
+    .isArray()
+    .withMessage("Category IDs must be an array"),
+
+  body("categoryIds.*")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("Each category ID must be a positive integer"),
+
+  body("categoryIds")
+    .optional()
+    .custom((categoryIds) => {
+      if (new Set(categoryIds).size !== categoryIds.length) {
+        throw new Error("Duplicate category IDs are not allowed")
+      }
+
+      return true;
+    }),
+
+  body("tagIds")
+    .optional()
+    .isArray()
+    .withMessage("Tag IDs must be an array"),
+
+  body("tagIds.*")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("Each tag ID must be a positive integer"),
+
+  body("tagIds")
+    .optional()
+    .custom((tagIds) => {
+      if (new Set(tagIds).size !== tagIds.length) {
+        throw new Error("Duplicate tag IDs are not allowed")
+      }
+
+      return true;
+    }),
 ];
