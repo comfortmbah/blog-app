@@ -33,3 +33,16 @@ export const countLikesByPostId = async (postId) => {
 
   return Number(result.rows[0].total);
 }
+
+export const hasUserLikedPost = async ({ userId, postId }) => {
+  const result = await pool.query(`
+    SELECT EXISTS (
+      SELECT 1
+      FROM likes
+      WHERE user_id = $1
+      AND post_id = $2
+    ) AS liked
+  `, [userId, postId]);
+
+  return result.rows[0].liked;
+}
