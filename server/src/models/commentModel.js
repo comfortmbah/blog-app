@@ -78,4 +78,4 @@ export const updateComment = async ({ id, content }) => {
   `, [content, id]);
 
   return result.rows[0];
-};
+}
