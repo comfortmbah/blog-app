@@ -1,5 +1,5 @@
 import AppError from '../utils/AppError.js';
-import { createComment,  getCommentsByPostId } from '../models/commentModel.js';
+import { createComment,  getCommentsByPostId, getCommentById, updateComment } from '../models/commentModel.js';
 import { getPostById } from '../models/postModel.js';
 
 
@@ -51,6 +51,40 @@ export const listComments = async (req, res, next) => {
       limit,
       comments,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const editComment = async (req, res, next) => {
+  try {
+    const { commentId } = req.params;
+    const { content } = req.body;
+
+    if (typeof content !== "string" || !content.trim()) {
+      throw new AppError("Comment content is required", 400);
+    }
+
+    const comment = await getCommentById(commentId);
+
+    if (!comment) {
+      throw new AppError("Comment not found", 404);
+    }
+
+    const isCommentOwner = String(comment.user_id) === String(req.user.id);
+    const isAdmin = req.user.role === 'admin';
+
+    if (!isCommentOwner && !isAdmin) {
+      throw new AppError("You are not allowed to edit this comment", 403);
+    }
+
+    const updatedComment = await updateComment({
+      id: commentId,
+      content: content.trim(),
+    });
+
+    res.status(200).json(updatedComment);
   } catch (error) {
     next(error);
   }
