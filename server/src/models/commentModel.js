@@ -90,3 +90,17 @@ export const deleteComment = async (id) => {
 
   return result.rows[0];
 }
+
+export const countCommentsByPostId = async (postId) => {
+  const result = await pool.query(`
+    SELECT COUNT(*) AS total
+    FROM comments c
+    JOIN posts p
+    ON p.id = c.post_id
+    WHERE c.post_id = $1
+    AND p.published = true
+    AND p.deleted_at IS NULL
+  `, [postId]);
+
+  return Number(result.rows[0].total);
+}
