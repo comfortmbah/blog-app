@@ -1,5 +1,7 @@
 import AppError from '../utils/AppError.js';
-import { createComment,  getCommentsByPostId, getCommentById, updateComment, deleteComment } from '../models/commentModel.js';
+import { createComment,  getCommentsByPostId, getCommentById, updateComment, deleteComment,
+  countCommentsByPostId
+} from '../models/commentModel.js';
 import { getPostById } from '../models/postModel.js';
 
 
@@ -40,15 +42,22 @@ export const listComments = async (req, res, next) => {
     const limit = Math.min(50, Math.max(1, Number.parseInt(req.query.limit, 10) || 10));
     const offset = (page - 1) * limit;
 
-    const comments = await getCommentsByPostId({
-      postId,
-      limit,
-      offset,
-    });
+    const [comments, totalComments] = await Promise.all([
+      getCommentsByPostId({
+        postId,
+        limit,
+        offset,
+      }),
+      countCommentsByPostId(postId),
+    ]);
+
+    const totalPages = Math.ceil(totalComments / limit);
 
     res.status(200).json({
       page,
       limit,
+      totalComments,
+      totalPages,
       comments,
     });
   } catch (error) {
