@@ -66,3 +66,16 @@ export const getCommentById = async (id) => {
 
   return result.rows[0];
 };
+
+
+export const updateComment = async ({ id, content }) => {
+  const result = await pool.query(`
+    UPDATE comments 
+    SET content = $1,
+    updated_at = CURRENT_TIMESTAMP
+    WHERE id = $2
+    RETURNING *
+  `, [content, id]);
+
+  return result.rows[0];
+};
