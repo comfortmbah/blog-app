@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 
 // Validate comment creation
 export const validateCreateComment = [
@@ -24,4 +24,11 @@ export const validateUpdateComment = [
     .withMessage("Comment content cannot be empty")
     .isLength({ max: 2000 })
     .withMessage("Comment must not exceed 2000 characters"),
+];
+
+
+export const validateCommentId = [
+  param("commentId")
+    .isInt({ min: 1 })
+    .withMessage("Comment ID must be a positive integer")
 ];
