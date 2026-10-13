@@ -23,3 +23,13 @@ export const removeLike = async ({ userId, postId }) => {
 
   return result.rows[0];
 }
+
+export const countLikesByPostId = async (postId) => {
+  const result = await pool.query(`
+    SELECT COUNT(*) AS total
+    FROM likes
+    WHERE post_id = $1
+  `, [postId]);
+
+  return Number(result.rows[0].total);
+}
