@@ -46,3 +46,38 @@ export const hasUserLikedPost = async ({ userId, postId }) => {
 
   return result.rows[0].liked;
 }
+
+
+export const getLikedPostsByUserId = async (userId, { limit, offset }) => {
+  const result = await pool.query(`
+    SELECT p.*,
+    l.created_at AS liked_at
+    FROM likes l
+    JOIN posts p
+    ON p.id = l.post_id
+    WHERE l.user_id = $1
+    AND p.published = true
+    AND p.deleted_at IS NULL
+    ORDER BY l.created_at DESC,
+    p.id DESC
+    LIMIT $2
+    OFFSET $3
+  `, [userId, limit, offset]);
+
+  return result.rows;
+};
+
+
+export const countLikedPostsByUserId = async (userId) => {
+  const result = await pool.query(`
+    SELECT COUNT(*)::int AS total
+    FROM likes l
+    JOIN posts p
+    ON p.id = l.post_id
+    WHERE l.user_id = $1
+    AND p.published = true
+    AND p.deleted_at IS NULL
+  `, [userId]);
+
+  return result.rows[0].total;
+}
