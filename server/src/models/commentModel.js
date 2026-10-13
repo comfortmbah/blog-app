@@ -73,7 +73,7 @@ export const updateComment = async ({ id, content }) => {
     UPDATE comments 
     SET content = $1,
     updated_at = CURRENT_TIMESTAMP
-    WHERE id = $2
+    WHERE id = $2 
     RETURNING *
   `, [content, id]);
 
