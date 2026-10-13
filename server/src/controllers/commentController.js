@@ -1,5 +1,5 @@
 import AppError from '../utils/AppError.js';
-import { createComment,  getCommentsByPostId, getCommentById, updateComment } from '../models/commentModel.js';
+import { createComment,  getCommentsByPostId, getCommentById, updateComment, deleteComment } from '../models/commentModel.js';
 import { getPostById } from '../models/postModel.js';
 
 
@@ -85,6 +85,34 @@ export const editComment = async (req, res, next) => {
     });
 
     res.status(200).json(updatedComment);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const removeComment = async (req, res, next) => {
+  try {
+    const { commentId } = req.params;
+
+    const comment = await getCommentById(commentId);
+
+    if (!comment) {
+      throw new AppError("Comment not found", 404);
+    }
+
+    const isCommentOwner = String(comment.user_id) === String(req.user.id);
+    const isAdmin = req.user.role === 'admin';
+
+    if (!isCommentOwner && !isAdmin) {
+      throw new AppError("You are not allowed to delete this comment", 403);
+    }
+
+    await deleteComment(commentId);
+
+    res.status(200).json({
+      message: "Comment deleted successfully",
+    });
   } catch (error) {
     next(error);
   }
