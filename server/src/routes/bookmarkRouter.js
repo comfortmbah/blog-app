@@ -1,5 +1,5 @@
 import express from 'express';
-import { bookmarkPost, unbookmarkPost, hasBookmarkedPost, getMyBookmarkedPosts } from '../controllers/bookmarkController';
+import { bookmarkPost, unbookmarkPost, hasBookmarkedPost, getMyBookmarkedPosts } from '../controllers/bookmarkController.js';
 import { protect } from '../middleware/authMiddleware.js';
 import { validatePostId } from '../middleware/bookmarkValidation.js';
 import { handleValidationErrors } from '../middleware/validationMiddleware.js';
