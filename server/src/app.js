@@ -1,3 +1,4 @@
+import helmet from "helmet";
 import express from "express";
 import cors from "cors";
 import blogRouter from "./routes/blogRouter.js"
@@ -13,6 +14,8 @@ import bookmarkRouter from './routes/bookmarkRouter.js';
 
 
 const app = express();
+
+app.use(helmet());
 
 app.use(cors());
 
