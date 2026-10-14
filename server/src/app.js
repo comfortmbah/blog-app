@@ -9,6 +9,7 @@ import categoryRouter from './routes/categoryRouter.js';
 import tagRouter from './routes/tagRouter.js';
 import commentRouter from './routes/commentRouter.js'
 import likeRouter from './routes/likeRouter.js';
+import bookmarkRouter from './routes/bookmarkRouter.js';
 
 
 const app = express();
@@ -30,6 +31,8 @@ app.use("/api/tags", tagRouter);
 app.use("/api", commentRouter);
 
 app.use("/api", likeRouter);
+
+app.use("/api", bookmarkRouter);
 
 app.use((req, res, next) => {
   next(new AppError(`Route not found: ${req.method} ${req.originalUrl}`, 404));
