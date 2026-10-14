@@ -20,6 +20,13 @@ export const validateRegisterUser = [
     .withMessage("Password is required")
     .isLength({ min: 8 })
     .withMessage("Password must be at least 8 characters")
+    .custom((password) => {
+      if (Buffer.byteLength(password, "utf8") > 72) {
+        throw new Error("Invalid email or password");
+      }
+
+      return true;
+    }),
 ];
 
 export const validateLoginUser = [
@@ -32,5 +39,12 @@ export const validateLoginUser = [
 
   body("password")
     .notEmpty()
-    .withMessage("Password is required"),
+    .withMessage("Password is required")
+    .custom((password) => {
+      if (Buffer.byteLength(password, "utf8") > 72) {
+        throw new Error("Invalid email or password");
+      }
+
+      return true;
+    }),
 ];
