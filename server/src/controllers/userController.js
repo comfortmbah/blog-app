@@ -58,13 +58,12 @@ export const loginUser = async (req, res, next) => {
       },
       process.env.JWT_SECRET,
       {
+        algorithms: ["HS256"],
         expiresIn: "1h",
         issuer: "blog-api",
         audience: "blog-client",
       }
     );
-
-    console.log("User logged in:", user.email);
 
     res.status(200).json({
       message: "Login successfully",
