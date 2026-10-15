@@ -18,8 +18,16 @@ const app = express();
 app.use(helmet());
 
 app.use(cors({
-  origin: process.env.CLIENT_URL,
+  origin: (origin, callback) => {
+    if (!origin || origin === process.env.CLIENT_URL) {
+      return callback(null, true);
+    }
+
+    return callback(new Error("Origin not allowed by CORS"));
+  },
+
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
