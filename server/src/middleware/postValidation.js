@@ -2,6 +2,9 @@ import { body } from "express-validator";
 
 export const validateCreatePost = [
   body("title")
+    .isString()
+    .withMessage("Title must be a string")
+    .bail()
     .trim()
     .notEmpty()
     .withMessage("Title is required")
@@ -9,6 +12,9 @@ export const validateCreatePost = [
     .withMessage("Title must not exceed 255 characters"),
   
   body("slug")
+    .isString()
+    .withMessage("Slug must be a string")
+    .bail()
     .trim()
     .notEmpty()
     .withMessage("Slug is required")
@@ -18,6 +24,9 @@ export const validateCreatePost = [
     .withMessage("Slug can only contain lowercase letters, numbers, and hyphens"),
  
   body("content")
+    .isString()
+    .withMessage("Content must be a string")
+    .bail()
     .trim()
     .notEmpty()
     .withMessage("Content is required"),
@@ -29,8 +38,8 @@ export const validateCreatePost = [
 
   body("categoryIds")
     .optional()
-    .isArray()
-    .withMessage("Category IDs must be an array"),
+    .isArray({ max: 20 })
+    .withMessage("Category IDs must be an array with no more than 20 items"),
 
   body("categoryIds.*")
     .optional()
@@ -40,7 +49,9 @@ export const validateCreatePost = [
   body("categoryIds")
     .optional()
     .custom((categoryIds) => {
-      if (new Set(categoryIds).size !== categoryIds.length) {
+      const normalizedIds = categoryIds.map(Number);
+
+      if (new Set(normalizedIds).size !== normalizedIds.length) {
         throw new Error("Duplicate category IDs are not allowed")
       }
 
@@ -49,8 +60,8 @@ export const validateCreatePost = [
 
   body("tagIds")
     .optional()
-    .isArray()
-    .withMessage("Tag IDs must be an array"),
+    .isArray({ max: 30 })
+    .withMessage("Tag IDs must be an array with no more than 30 items"),
 
   body("tagIds.*")
     .optional()
@@ -60,7 +71,9 @@ export const validateCreatePost = [
   body("tagIds")
     .optional()
     .custom((tagIds) => {
-      if (new Set(tagIds).size !== tagIds.length) {
+      const normalizedIds = tagIds.map(Number);
+
+      if (new Set(normalizedIds).size !== normalizedIds.length) {
         throw new Error("Duplicate tag IDs are not allowed")
       }
 
@@ -71,6 +84,9 @@ export const validateCreatePost = [
 export const validateUpdatePost = [
   body("title")
     .optional()
+    .isString()
+    .withMessage("Title must be a string")
+    .bail()
     .trim()
     .notEmpty()
     .withMessage("Title cannot be empty")
@@ -79,6 +95,9 @@ export const validateUpdatePost = [
 
   body("slug")
     .optional()
+    .isString()
+    .withMessage("Slug must be a string")
+    .bail()
     .trim()
     .notEmpty()
     .withMessage("Slug cannot be empty")
@@ -89,6 +108,9 @@ export const validateUpdatePost = [
 
   body("content")
     .optional()
+    .isString()
+    .withMessage("Content must be a string")
+    .bail()
     .trim()
     .notEmpty()
     .withMessage("Content cannot be empty"), 
@@ -100,8 +122,8 @@ export const validateUpdatePost = [
   
   body("categoryIds")
     .optional()
-    .isArray()
-    .withMessage("Category IDs must be an array"),
+    .isArray({ max: 20 })
+    .withMessage("Category IDs must be an array with no more than 20 items"),
 
   body("categoryIds.*")
     .optional()
@@ -111,7 +133,9 @@ export const validateUpdatePost = [
   body("categoryIds")
     .optional()
     .custom((categoryIds) => {
-      if (new Set(categoryIds).size !== categoryIds.length) {
+      const normalizedIds = categoryIds.map(Number);
+
+      if (new Set(normalizedIds).size !== normalizedIds.length) {
         throw new Error("Duplicate category IDs are not allowed")
       }
 
@@ -120,8 +144,8 @@ export const validateUpdatePost = [
 
   body("tagIds")
     .optional()
-    .isArray()
-    .withMessage("Tag IDs must be an array"),
+    .isArray({ max: 30 })
+    .withMessage("Tag IDs must be an array with no more than 30 items"),
 
   body("tagIds.*")
     .optional()
@@ -131,7 +155,9 @@ export const validateUpdatePost = [
   body("tagIds")
     .optional()
     .custom((tagIds) => {
-      if (new Set(tagIds).size !== tagIds.length) {
+      const normalizedIds = tagIds.map(Number);
+
+      if (new Set(normalizedIds).size !== normalizedIds.length) {
         throw new Error("Duplicate tag IDs are not allowed")
       }
 
