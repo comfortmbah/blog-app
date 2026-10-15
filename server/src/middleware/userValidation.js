@@ -64,6 +64,30 @@ export const validateRegisterUser = [
 ];
 
 export const validateLoginUser = [
+  body().custom((_, { req }) => {
+    if (
+      !req.body ||
+      typeof req.body !== "object" ||
+      Array.isArray(req.body)
+    ) {
+      throw new Error("Request body must be a JSON object");
+    }
+
+    const allowedFields = ["email", "password"];
+
+    const unexpectedFields = Object.keys(req.body).filter(
+      (field) => !allowedFields.includes(field)
+    );
+
+    if (unexpectedFields.length > 0) {
+      throw new Error(
+        `Unexpected login field(s): ${unexpectedFields.join(", ")}`
+      );
+    }
+
+    return true;
+  }),
+  
   body("email")
     .isString()
     .withMessage("Email must be a string")
