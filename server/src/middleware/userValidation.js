@@ -1,6 +1,30 @@
 import { body } from "express-validator";
 
 export const validateRegisterUser = [
+  body().custom((_, { req }) => {
+    if (
+      !req.body ||
+      typeof req.body !== "object" ||
+      Array.isArray(req.body)
+    ) {
+      throw new Error("Request body must be a JSON object");
+    }
+
+    const allowedFields = ["name", "email", "password"];
+
+    const unexpectedFields = Object.keys(req.body).filter(
+      (field) => !allowedFields.includes(field)
+    );
+
+    if (unexpectedFields.length > 0) {
+      throw new Error(
+        `Unexpected registration field(s): ${unexpectedFields.join(", ")}`
+      );
+    }
+
+    return true;
+  }),
+
   body("name")
     .isString()
     .withMessage("Name must be a string")
