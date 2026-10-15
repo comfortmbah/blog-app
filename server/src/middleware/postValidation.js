@@ -163,4 +163,25 @@ export const validateUpdatePost = [
 
       return true;
     }),
+
+  body().custom((_, { req }) => {
+    const allowedFields = [
+      "title",
+      "slug",
+      "content",
+      "published",
+      "categoryIds",
+      "tagIds",
+    ];
+
+    const hasUpdatableField = allowedFields.some((field) =>
+      Object.prototype.hasOwnProperty.call(req.body, field)
+    );
+
+    if (!hasUpdatableField) {
+      throw new Error("At least one field must be provided for update");
+    }
+
+    return true;
+  }),
 ];
