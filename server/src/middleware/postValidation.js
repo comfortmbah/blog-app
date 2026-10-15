@@ -1,6 +1,36 @@
 import { body } from "express-validator";
 
+
+const validateAllowedFields = (allowedFields, resourceName) =>
+  body().custom((_, { req }) => {
+    if (
+      !req.body ||
+      typeof req.body !== "object" ||
+      Array.isArray(req.body)
+    ) {
+      throw new Error("Request body must be a JSON object");
+    }
+
+    const unexpectedFields = Object.keys(req.body).filter(
+      (field) => !allowedFields.includes(field)
+    );
+
+    if (unexpectedFields.length > 0) {
+      throw new Error(
+        `Unexpected ${resourceName} field(s): ${unexpectedFields.join(", ")}`
+      );
+    }
+
+    return true;
+});
+
+
 export const validateCreatePost = [
+  validateAllowedFields(
+    ["title", "slug", "content", "published", "categoryIds", "tagIds"],
+    "post"
+  ),
+
   body("title")
     .isString()
     .withMessage("Title must be a string")
@@ -82,6 +112,11 @@ export const validateCreatePost = [
 ]
 
 export const validateUpdatePost = [
+  validateAllowedFields(
+    ["title", "slug", "content", "published", "categoryIds", "tagIds"],
+    "post"
+  ),
+  
   body("title")
     .optional()
     .isString()
