@@ -23,6 +23,7 @@
     "jsonwebtoken": "^9.0.3",
     "node-pg-migrate": "^9.0.0",
     "nodemailer": "^10.1.1",
-    "pg": "^8.23.0"
+    "pg": "^8.23.0",
+    "resend": "^6.33.0"
   }
 }
