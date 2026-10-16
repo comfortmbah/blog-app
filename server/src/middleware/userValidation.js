@@ -113,3 +113,44 @@ export const validateLoginUser = [
       return true;
     }),
 ];
+
+
+
+export const validateForgotPassword = [
+  // 🛡️ STEP 1: Ensure the request body is a JSON object
+  body().custom((_, { req }) => {
+    if (
+      !req.body ||
+      typeof req.body !== "object" ||
+      Array.isArray(req.body)
+    ) {
+      throw new Error("Request body must be a JSON object");
+    }
+
+    // 🛡️ STEP 2: Reject unexpected fields
+    const allowedFields = ["email"];
+
+    const unexpectedFields = Object.keys(req.body).filter(
+      (field) => !allowedFields.includes(field)
+    );
+
+    if (unexpectedFields.length > 0) {
+      throw new Error(
+        `Unexpected forgot-password field(s): ${unexpectedFields.join(", ")}`
+      );
+    }
+
+    return true;
+  }),
+
+   // 📧 STEP 3: Validate the email
+  body("email")
+    .isString()
+    .withMessage("Email must be a string")
+    .bail()
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required")
+    .isEmail()
+    .withMessage("Please, provide a valid email address"),
+];
