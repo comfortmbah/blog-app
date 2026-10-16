@@ -48,3 +48,20 @@ export const deleteExpiredPasswordResetTokens = async () => {
 
   return result.rowCount;
 }
+
+
+export const invalidatePasswordResetTokens = async (userId) => {
+  const result = await pool.query(
+    `
+      UPDATE password_reset_tokens
+      SET used_at = CURRENT_TIMESTAMP
+      WHERE user_id = $1
+        AND used_at IS NULL
+        AND expires_at > CURRENT_TIMESTAMP
+      RETURNING id
+    `,
+    [userId]
+  );
+
+  return result.rowCount;
+};
