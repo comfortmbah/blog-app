@@ -20,3 +20,19 @@ export const registerRateLimit = rateLimit({
     message: "Too many registration attempts. Please try again in 15 minutes.",
   },
 });
+
+
+export const forgotPasswordRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+
+  limit: 5, // Maximum 5 requests per IP per window
+
+  standardHeaders: "draft-8",
+
+  legacyHeaders: false,
+
+  message: {
+    message:
+      "Too many password reset requests. Please try again in 15 minutes.",
+  },
+});
