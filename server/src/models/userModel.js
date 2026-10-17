@@ -33,3 +33,21 @@ export const findUserById = async (id) => {
 
   return result.rows[0];
 };
+
+
+export const updateUserPassword = async (userId, passwordHash) => {
+  const result = await pool.query(
+    `
+      UPDATE users
+      SET
+        password_hash = $1,
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = $2
+        AND deleted_at IS NULL
+      RETURNING id, name, email, role, updated_at
+    `,
+    [passwordHash, userId]
+  );
+
+  return result.rows[0] || null;
+};
