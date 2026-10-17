@@ -1,5 +1,7 @@
-import { findUserByEmail } from '../models/userModel.js';
-import { createPasswordResetToken, invalidatePasswordResetTokens } from '../models/passwordResetModel.js';
+import { findUserByEmail, updateUserPassword } from '../models/userModel.js';
+import { createPasswordResetToken, invalidatePasswordResetTokens, findValidPasswordResetToken,
+  markPasswordResetTokenAsUsed
+ } from '../models/passwordResetModel.js';
 import { generatePasswordResetToken, hashPasswordResetToken } from "../utils/passwordResetToken.js"
 import { sendEmail } from '../utils/emailService.js';
 
@@ -97,4 +99,54 @@ const escapeHtml = (value = "") => {
 
     return entities[character];
   });
+};
+
+
+export const resetPassword = async (req, res, next) => {
+  try {
+    const { token, password } = req.body;
+
+    const tokenHash = hashPasswordResetToken(token);
+
+    const resetToken = await findValidPasswordResetToken(tokenHash);
+
+    if (!resetToken) {
+      return res.status(400).json({
+        message: "Invalid or expired password reset link.",
+      });
+    }
+
+    // STEP 4: Hash the new password
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    // STEP 5: Update the user's password
+    const updatedUser = await updateUserPassword(
+      resetToken.user_id,
+      passwordHash
+    );
+
+    if (!updatedUser) {
+      return res.status(400).json({
+        message: "Invalid or expired password reset link.",
+      });
+    }
+
+    // STEP 6: Mark the reset token as used
+    const usedToken = await markPasswordResetTokenAsUsed(
+      resetToken.id
+    );
+
+    if (!usedToken) {
+      return res.status(400).json({
+        message: "Invalid or expired password reset link.",
+      });
+    }
+
+    // ✅ STEP 7: Confirm success
+    return res.status(200).json({
+      message: "Your password has been reset successfully. You can now log in.",
+    });
+  } catch (error) {
+    return next(error);
+  }
 };
