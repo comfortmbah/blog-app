@@ -154,3 +154,65 @@ export const validateForgotPassword = [
     .isEmail()
     .withMessage("Please, provide a valid email address"),
 ];
+
+
+export const validateResetPassword = [
+  //  STEP 1: Ensure the request body is an object
+  body().custom((_, { req }) => {
+    if (
+      !req.body ||
+      typeof req.body !== "object" ||
+      Array.isArray(req.body)
+    ) {
+      throw new Error("Request body must be a JSON object");
+    }
+
+    //  STEP 2: Allow only the token and new password
+    const allowedFields = ["token", "password"];
+
+    const unexpectedFields = Object.keys(req.body).filter(
+      (field) => !allowedFields.includes(field)
+    );
+
+    if (unexpectedFields.length > 0) {
+      throw new Error(
+        `Unexpected reset-password field(s): ${unexpectedFields.join(", ")}`
+      );
+    }
+
+    return true;
+  }),
+
+  //  STEP 3: Validate the reset token
+  body("token")
+    .isString()
+    .withMessage("Reset token must be a string")
+    .bail()
+    .notEmpty()
+    .withMessage("Reset token is required")
+    .bail()
+    .isHexadecimal()
+    .withMessage("Invalid reset token")
+    .bail()
+    .isLength({ min: 64, max: 64 })
+    .withMessage("Invalid reset token"),
+
+  // STEP 4: Validate the new password
+  body("password")
+    .isString()
+    .withMessage("Password must be a string")
+    .bail()
+    .notEmpty()
+    .withMessage("Password is required")
+    .bail()
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 characters")
+    .bail()
+    .custom((password) => {
+      if (Buffer.byteLength(password, "utf8") > 72) {
+        throw new Error("Password must not exceed 72 UTF-8 bytes");
+      }
+
+      return true;
+    }),
+];
