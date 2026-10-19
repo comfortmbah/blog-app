@@ -116,7 +116,7 @@ export const resetPassword = async (req, res, next) => {
       });
     }
 
-    // STEP 4: Hash the new password
+  
     const passwordHash = await bcrypt.hash(password, 12);
 
     // STEP 5: Update the user's password
@@ -131,7 +131,7 @@ export const resetPassword = async (req, res, next) => {
       });
     }
 
-    // STEP 6: Mark the reset token as used
+  
     const usedToken = await markPasswordResetTokenAsUsed(
       resetToken.id
     );
@@ -142,7 +142,7 @@ export const resetPassword = async (req, res, next) => {
       });
     }
 
-    // ✅ STEP 7: Confirm success
+
     return res.status(200).json({
       message: "Your password has been reset successfully. You can now log in.",
     });
