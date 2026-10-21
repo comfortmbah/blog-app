@@ -2,6 +2,7 @@ import { findUserByEmail } from '../models/userModel.js';
 import { createPasswordResetToken, invalidatePasswordResetTokens, completePasswordReset } from '../models/passwordResetModel.js';
 import { generatePasswordResetToken, hashPasswordResetToken } from "../utils/passwordResetToken.js"
 import { sendEmail } from '../utils/emailService.js';
+import bcrypt from "bcrypt";
 
 
 
