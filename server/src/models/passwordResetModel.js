@@ -82,7 +82,7 @@ export const completePasswordReset = async ({ tokenHash, passwordHash }) => {
       WHERE token_hash = $1
       AND expires_at > CURRENT_TIMESTAMP
       AND used_at IS NULL
-      LMIT 1
+      LIMIT 1
       FOR UPDATE
     `, [tokenHash]);
 
