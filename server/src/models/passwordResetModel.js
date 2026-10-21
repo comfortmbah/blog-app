@@ -91,6 +91,8 @@ export const completePasswordReset = async ({ tokenHash, passwordHash }) => {
     if (!resetToken) {
       await client.query("ROLLBACK");
       transactionStarted = false;
+
+      return null;
     }
 
     const userResult = await client.query(`
