@@ -4,11 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js",
-    "migrate": "node --env-file=.env ./node_modules/node-pg-migrate/bin/node-pg-migrate.js",
-    "test": "vitest run",
-    "test:watch": "vitest"
-  },
+  "start": "node server.js",
+  "migrate": "node --env-file=.env ./node_modules/node-pg-migrate/bin/node-pg-migrate.js",
+  "migrate:test": "node --env-file=.env.test ./node_modules/node-pg-migrate/bin/node-pg-migrate.js",
+  "test": "node --env-file=.env.test ./node_modules/vitest/vitest.mjs run",
+  "test:watch": "node --env-file=.env.test ./node_modules/vitest/vitest.mjs"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
