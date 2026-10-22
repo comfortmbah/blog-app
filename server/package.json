@@ -6,7 +6,7 @@
   "scripts": {
   "start": "node server.js",
   "migrate": "node --env-file=.env ./node_modules/node-pg-migrate/bin/node-pg-migrate.js",
-  "migrate:test": "node --env-file=.env.test ./node_modules/node-pg-migrate/bin/node-pg-migrate.js",
+  "migrate:test": "node --env-file=.env.test ./node_modules/node-pg-migrate/bin/node-pg-migrate.js up",
   "test": "node --env-file=.env.test ./node_modules/vitest/vitest.mjs run",
   "test:watch": "node --env-file=.env.test ./node_modules/vitest/vitest.mjs"
 },
