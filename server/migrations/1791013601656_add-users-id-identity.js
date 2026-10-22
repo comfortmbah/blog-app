@@ -9,10 +9,7 @@ export const shorthands = undefined;
  * @returns {Promise<void> | void}
  */
 export const up = (pgm) => {
-  pgm.sql(`
-    ALTER TABLE users
-    ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY;
-  `);
+  
 };
 
 /**
@@ -21,8 +18,5 @@ export const up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 export const down = (pgm) => {
-  pgm.sql(`
-    ALTER TABLE users
-    ALTER COLUMN id DROP IDENTITY;
-  `);
+  
 };
